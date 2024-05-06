@@ -1,0 +1,6 @@
+stages:
+  - test
+
+backend-test:
+  stage: test
+  script: echo "Hello world!!!"
