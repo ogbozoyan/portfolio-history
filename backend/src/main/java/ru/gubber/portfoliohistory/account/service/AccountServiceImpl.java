@@ -22,4 +22,19 @@ public class AccountServiceImpl implements AccountService {
         Account newAccount = repository.save(new Account(UUID.randomUUID(), name, broker, number));
         return newAccount.getId();
     }
+
+    @Override
+    public UUID updateAccount(String id, String name, String broker, String number) {
+        UUID uuid = UUID.fromString(id);
+        if (!repository.existsById(uuid)) {
+            return null;
+        }
+        UUID idByNameAndNumber = repository.findByNumber(number).getId();
+        if (idByNameAndNumber != uuid) {
+            return idByNameAndNumber;
+        } else {
+            repository.save(new Account(uuid, name, broker, number));
+            return uuid;
+        }
+    }
 }
