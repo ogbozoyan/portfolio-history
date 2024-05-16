@@ -1,4 +1,6 @@
 package ru.gubber.portfoliohistory.account.dto;
 
-public record ResponceId(String id) {
+import java.util.UUID;
+
+public record ResponceId(UUID id) {
 }

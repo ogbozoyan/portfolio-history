@@ -36,6 +36,6 @@ public class AccountController {
             }
             return new ValidationError(ResponceStatus.ERROR, "Не правильный запрос", responce);
         }
-        return new OutcomeAccountDto(accountService.createAccount(dto.name(), dto.broker(), dto.number()));
+        return new OutcomeAccountDto(new ResponceId(accountService.createAccount(dto.name(), dto.broker(), dto.number())));
     }
 }

@@ -80,7 +80,7 @@ POST /api/v1/create-account
 В случае, если если счёт успешно создан, сервер должен вернуть код 200 и ответ
 [source, rest]
 ----
-Content-Type: appliction/json
+Content-Type: application/json
 
 {
     status: "SUCCESS"

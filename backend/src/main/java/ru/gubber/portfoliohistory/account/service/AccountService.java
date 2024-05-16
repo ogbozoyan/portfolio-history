@@ -1,5 +1,7 @@
 package ru.gubber.portfoliohistory.account.service;
 
+import java.util.UUID;
+
 public interface AccountService {
-    String createAccount(String name, String broker, String number);
+    UUID createAccount(String name, String broker, String number);
 }
