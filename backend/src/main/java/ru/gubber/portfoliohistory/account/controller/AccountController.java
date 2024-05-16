@@ -10,6 +10,7 @@ import ru.gubber.portfoliohistory.account.service.AccountService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 public class AccountController {
@@ -36,6 +37,12 @@ public class AccountController {
             }
             return new ValidationError(ResponceStatus.ERROR, "Не правильный запрос", responce);
         }
-        return new OutcomeAccountDto(new ResponceId(accountService.createAccount(dto.name(), dto.broker(), dto.number())));
+        UUID uuid = accountService.createAccount(dto.name(), dto.broker(), dto.number());
+        if (uuid != null) {
+            return new OutcomeAccountDto(new ResponceId(uuid));
+        } else {
+            return new ValidationError(ResponceStatus.WARN, String.format("В системе уже зарегистрирован счёт %s у брокера %s", dto.number(), dto.broker()), null);
+        }
+
     }
 }

@@ -16,6 +16,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public UUID createAccount(String name, String broker, String number) {
+        if (repository.existsByNameAndNumber(name, number)) {
+            return null;
+        }
         Account newAccount = repository.save(new Account(UUID.randomUUID(), name, broker, number));
         return newAccount.getId();
     }
