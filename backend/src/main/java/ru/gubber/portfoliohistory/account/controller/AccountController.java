@@ -34,7 +34,7 @@ public class AccountController {
             if (dto.number().isEmpty()) {
                 responce.add(new FieldValidationError("number","Поле не может быть пустым"));
             }
-            return new ValidationError("ERROR", "Не правильный запрос", responce);
+            return new ValidationError(ResponceStatus.ERROR, "Не правильный запрос", responce);
         }
         return new OutcomeAccountDto(accountService.createAccount(dto.name(), dto.broker(), dto.number()));
     }

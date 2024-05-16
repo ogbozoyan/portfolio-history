@@ -4,7 +4,7 @@ import java.util.List;
 
 public class ValidationError extends BaseResponce {
 
-    public ValidationError(String status, String errorMessage, List<FieldValidationError> responce) {
+    public ValidationError(ResponceStatus status, String errorMessage, List<FieldValidationError> responce) {
         super(status, errorMessage, responce);
     }
 }

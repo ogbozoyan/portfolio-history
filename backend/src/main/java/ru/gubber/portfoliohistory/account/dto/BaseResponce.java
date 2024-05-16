@@ -1,22 +1,18 @@
 package ru.gubber.portfoliohistory.account.dto;
 
 public class BaseResponce {
-    String status;
-    String errorMessage;
-    Object responce;
+    private final ResponceStatus status;
+    private String errorMessage;
+    private Object responce;
 
-    public BaseResponce(String status, String errorMessage, Object responce) {
+    public BaseResponce(ResponceStatus status, String errorMessage, Object responce) {
         this.status = status;
         this.errorMessage = errorMessage;
         this.responce = responce;
     }
 
-    public String getStatus() {
+    public ResponceStatus getStatus() {
         return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public String getErrorMessage() {
