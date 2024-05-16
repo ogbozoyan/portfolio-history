@@ -15,6 +15,9 @@ public class Account {
     String broker;
     String number;
 
+    public Account() {
+    }
+
     public Account(UUID id, String name, String broker, String number) {
         this.id = id;
         this.name = name;
