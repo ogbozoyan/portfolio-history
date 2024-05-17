@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import ru.gubber.portfoliohistory.account.model.Account;
 import ru.gubber.portfoliohistory.account.repository.AccountRepository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -46,5 +47,10 @@ public class AccountServiceImpl implements AccountService {
         }
         repository.deleteById(uuid);
         return uuid;
+    }
+
+    @Override
+    public List<Account> getAccountsList() {
+        return repository.findAll();
     }
 }

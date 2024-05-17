@@ -1,8 +1,9 @@
 package ru.gubber.portfoliohistory.account.dto;
 
-public class OutcomeAccountDto extends BaseResponce {
+import java.util.List;
 
-    public OutcomeAccountDto(ResponceId responce) {
+public class OutcomeAccountDto extends BaseResponce {
+    public OutcomeAccountDto(List<AccountDto> responce) {
         super(ResponceStatus.SUCCESS, null, responce);
     }
 }
