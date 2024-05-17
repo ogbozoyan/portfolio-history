@@ -37,4 +37,14 @@ public class AccountServiceImpl implements AccountService {
             return uuid;
         }
     }
+
+    @Override
+    public UUID deleteAccount(String id) {
+        UUID uuid = UUID.fromString(id);
+        if (!repository.existsById(uuid)) {
+            return null;
+        }
+        repository.deleteById(uuid);
+        return uuid;
+    }
 }

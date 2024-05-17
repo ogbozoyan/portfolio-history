@@ -6,4 +6,6 @@ public interface AccountService {
     UUID createAccount(String name, String broker, String number);
 
     UUID updateAccount(String id, String name, String broker, String number);
+
+    UUID deleteAccount(String id);
 }

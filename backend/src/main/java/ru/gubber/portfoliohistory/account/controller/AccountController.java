@@ -39,24 +39,41 @@ public class AccountController {
     }
 
     @PostMapping("/api/v1/update-account")
-    public BaseResponce updateAccount(@RequestBody IncomeUpdateAccountDto dto) {
+    public BaseResponce updateAccount(@RequestBody IdIncomeAccountDto idDto, @RequestBody IncomeAccountDto dto) {
         log.info("Получен запрос на обновление счета {}.", dto.name());
-        if (dto.id().isEmpty() || dto.name().isEmpty() || dto.broker().isEmpty() || dto.number().isEmpty()) {
+        if (idDto.id().isEmpty() || dto.name().isEmpty() || dto.broker().isEmpty() || dto.number().isEmpty()) {
             List<FieldValidationError> responce = new ArrayList<>();
-            if (dto.id().isEmpty()) {
+            if (idDto.id().isEmpty()) {
                 responce.add(new FieldValidationError("id", "Поле не может быть пустым"));
             }
             validationDto(dto.name(), dto.broker(), dto.number(), responce);
             return new ValidationError(ResponceStatus.ERROR, "Не правильный запрос", responce);
         }
-        UUID uuid = accountService.updateAccount(dto.id(), dto.name(), dto.broker(), dto.number());
+        UUID uuid = accountService.updateAccount(idDto.id(), dto.name(), dto.broker(), dto.number());
         if (uuid != null) {
-            if (uuid.toString().equals(dto.id())) {
+            if (uuid.toString().equals(idDto.id())) {
                 return new OutcomeAccountDto(new ResponceId(uuid));
             } else {
                 return new ValidationError(ResponceStatus.WARN,
                         String.format("В системе уже зарегистрирован счёт %s у брокера %s", dto.number(), dto.broker()), null);
             }
+        } else {
+            return new ValidationError(ResponceStatus.WARN,
+                    String.format("Нет счёта с идентификатором %s", idDto.id()), null);
+        }
+    }
+
+    @PostMapping("/api/v1/delete-account")
+    public BaseResponce deleteAccount(@RequestBody IdIncomeAccountDto dto) {
+        log.info("Получен запрос на удаление счета {}.", dto.id());
+        if (dto.id().isEmpty()) {
+            List<FieldValidationError> responce = new ArrayList<>();
+            responce.add(new FieldValidationError("id", "Поле не может быть пустым"));
+            return new ValidationError(ResponceStatus.ERROR, "Не правильный запрос", responce);
+        }
+        UUID uuid = accountService.deleteAccount(dto.id());
+        if (uuid != null) {
+            return new OutcomeAccountDto(new ResponceId(uuid));
         } else {
             return new ValidationError(ResponceStatus.WARN,
                     String.format("Нет счёта с идентификатором %s", dto.id()), null);
