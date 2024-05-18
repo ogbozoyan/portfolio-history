@@ -1,0 +1,12 @@
+import {instance} from "src/api/base-connector.js";
+
+export const accountsConnector = {
+  createAccount(account, callBack) {
+    instance.post('create-account',
+      account
+    ).then(response => callBack(response))
+  },
+  getAccountsList(callBack) {
+    instance.post('get-accounts-list').then(response => callBack(response))
+  }
+}
