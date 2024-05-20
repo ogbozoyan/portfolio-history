@@ -13,4 +13,6 @@ public interface AccountService {
     UUID deleteAccount(String id);
 
     List<Account> getAccountsList();
+
+    Account getAccountsInfo(String id);
 }

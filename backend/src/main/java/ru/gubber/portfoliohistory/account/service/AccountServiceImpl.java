@@ -5,6 +5,7 @@ import ru.gubber.portfoliohistory.account.model.Account;
 import ru.gubber.portfoliohistory.account.repository.AccountRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -52,5 +53,11 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public List<Account> getAccountsList() {
         return repository.findAll();
+    }
+
+    @Override
+    public Account getAccountsInfo(String id) {
+        Optional<Account> optionalAccount = repository.findById(UUID.fromString(id));
+        return optionalAccount.orElse(null);
     }
 }

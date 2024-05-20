@@ -204,7 +204,7 @@ class AccountControllerTest {
     }
 
     @Test
-    @DisplayName("Вызывается сервис")
+    @DisplayName("При получении списка счетов получаем список dto")
     void getAccountsList_thenReturnDtoList() {
         List<Account> accounts = new ArrayList<>();
         accounts.add(validAccount1);
@@ -219,10 +219,48 @@ class AccountControllerTest {
     }
 
     @Test
-    @DisplayName("При удалении счета - dto.isEmpty- возвращается ошибка валидации")
+    @DisplayName("При получении списка счетов - dtos.isEmpty- возвращается ошибка валидации")
     void getAccountsList_whenIdDtoIsEmpty_thenReturnValidationError() {
         ValidationError responceError = new ValidationError(ResponceStatus.ERROR, "Список счетов пуст.", null);
         ValidationError result = (ValidationError) accountController.getAccountsList();
         Assertions.assertEquals(responceError.getErrorMessage(), result.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("При получении информации о счете получает dto")
+    void getAccountsInfo_thenReturnDto() {
+        Mockito.when(mockAccountService.getAccountsInfo(anyString())).thenReturn(validAccount1);
+
+        BaseResponce accountsInfo = accountController.getAccountsInfo(new IdIncomeAccountDto(validAccount1.getId().toString()));
+        AccountDto responce = (AccountDto) accountsInfo.getResponce();
+
+        Assertions.assertAll(
+                () -> {
+                    Assertions.assertEquals(validAccount1.getId().toString(), responce.id());
+                    Assertions.assertEquals(validAccount1.getName(), responce.name());
+                    Assertions.assertEquals(validAccount1.getBroker(), responce.broker());
+                    Assertions.assertEquals(validAccount1.getNumber(), responce.number());
+                }
+        );
+    }
+
+    @Test
+    @DisplayName("При получении информации о счете со значением - idDto.isEmpty- возвращается ошибка валидации")
+    void getAccountsInfo_whenIdDtoIsEmpty_thenReturnValidationError() {
+        List<FieldValidationError> responce = new ArrayList<>();
+        responce.add(new FieldValidationError("id","Поле не может быть пустым"));
+        ValidationError responceError = new ValidationError(ResponceStatus.ERROR, "Не правильный запрос", responce);
+        ValidationError result = (ValidationError) accountController.getAccountsInfo(new IdIncomeAccountDto(""));
+        Assertions.assertEquals(responceError.getErrorMessage(), result.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("При получении информации о счете при получении из сервиса значения null возвращается Error")
+    void getAccountsInfo_whenUUIDisNull_thenReturnError() {
+        Mockito.when(mockAccountService.getAccountsInfo(anyString())).thenReturn(null);
+        ValidationError validationError = new ValidationError(ResponceStatus.WARN,
+                String.format("Нет счёта с идентификатором %s", "f21c831f-9807-4de5-88c7-61cfe33e1c50"), null);
+        ValidationError result = (ValidationError) accountController.getAccountsInfo(new IdIncomeAccountDto("f21c831f-9807-4de5-88c7-61cfe33e1c50"));
+        Assertions.assertEquals(validationError.getErrorMessage(), result.getErrorMessage());
     }
 }
