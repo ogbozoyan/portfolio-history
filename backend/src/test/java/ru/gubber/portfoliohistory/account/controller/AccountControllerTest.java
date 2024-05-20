@@ -56,12 +56,32 @@ class AccountControllerTest {
     }
 
     @Test
-    @DisplayName("При сохранении некорректных данных счета возвращается ошибка валидации")
+    @DisplayName("При сохранении некорректных данных счета- name.isEmpty возвращается ошибка валидации")
     void createAccount_whenNameIsEmpty_thenReturnValidationError() {
         List<FieldValidationError> responce = new ArrayList<>();
         responce.add(new FieldValidationError("name","Поле не может быть пустым"));
         ValidationError responceError = new ValidationError(ResponceStatus.ERROR, "Не правильный запрос", responce);
         ValidationError result = (ValidationError) accountController.createAccount(new IncomeAccountDto("", "БКС", "03"));
+        Assertions.assertEquals(responceError.getErrorMessage(), result.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("При сохранении некорректных данных счета - broker.isEmpty возвращается ошибка валидации")
+    void createAccount_whenBrokerIsEmpty_thenReturnValidationError() {
+        List<FieldValidationError> responce = new ArrayList<>();
+        responce.add(new FieldValidationError("broker","Поле не может быть пустым"));
+        ValidationError responceError = new ValidationError(ResponceStatus.ERROR, "Не правильный запрос", responce);
+        ValidationError result = (ValidationError) accountController.createAccount(new IncomeAccountDto("БКС3", "", "03"));
+        Assertions.assertEquals(responceError.getErrorMessage(), result.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("При сохранении некорректных данных счета - number.isEmpty возвращается ошибка валидации")
+    void createAccount_whenNumberIsEmpty_thenReturnValidationError() {
+        List<FieldValidationError> responce = new ArrayList<>();
+        responce.add(new FieldValidationError("number","Поле не может быть пустым"));
+        ValidationError responceError = new ValidationError(ResponceStatus.ERROR, "Не правильный запрос", responce);
+        ValidationError result = (ValidationError) accountController.createAccount(new IncomeAccountDto("БКС3", "БКС", ""));
         Assertions.assertEquals(responceError.getErrorMessage(), result.getErrorMessage());
     }
 
