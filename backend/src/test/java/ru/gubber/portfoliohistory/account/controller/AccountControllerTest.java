@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -56,6 +57,16 @@ class AccountControllerTest {
     }
 
     @Test
+    @DisplayName("При получении значения null из сервиса озвращается ответ - Error")
+    void createAccount_whenUUIDisNull_thenReturnError() {
+        Mockito.when(mockAccountService.createAccount(anyString(), anyString(), anyString())).thenReturn(null);
+        ValidationError validationError = new ValidationError(ResponceStatus.WARN,
+                String.format("В системе уже зарегистрирован счёт %s у брокера %s", "БКС3", "БКС"), null);
+        ValidationError result = (ValidationError) accountController.createAccount(new IncomeAccountDto("БКС3", "БКС", "БКС3"));
+        Assertions.assertEquals(validationError.getErrorMessage(), result.getErrorMessage());
+    }
+
+    @Test
     @DisplayName("При сохранении некорректных данных счета- name.isEmpty возвращается ошибка валидации")
     void createAccount_whenNameIsEmpty_thenReturnValidationError() {
         List<FieldValidationError> responce = new ArrayList<>();
@@ -85,9 +96,10 @@ class AccountControllerTest {
         Assertions.assertEquals(responceError.getErrorMessage(), result.getErrorMessage());
     }
 
-   /* @Test
+    @Test
+    @DisplayName("ри обновлении ")
     void updateAccount() {
-    }*/
+    }
 
     /*@Test
     void deleteAccount() {
