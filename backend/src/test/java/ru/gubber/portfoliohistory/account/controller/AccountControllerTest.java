@@ -29,6 +29,7 @@ class AccountControllerTest {
     private UUID uuid2 = UUID.fromString("b1acc051-ea56-4ffc-a249-67010f8dd132");
     private Account validAccount1 = new Account(uuid1, "БКС1", "БКС", "01");
     private Account validAccount2 = new Account(uuid2, "БКС2", "БКС", "02");
+    private AccountMapper mapper = new AccountMapper();
 
     @Test
     @DisplayName("Вызывается сервис")
@@ -141,11 +142,87 @@ class AccountControllerTest {
         ValidationError result = (ValidationError) accountController.updateAccount(new IdIncomeAccountDto("f21c831f-9807-4de5-88c7-61cfe33e1c50"), new IncomeAccountDto("БКС3", "БКС", "БКС3"));
         Assertions.assertEquals(validationError.getErrorMessage(), result.getErrorMessage());
     }
-    /*@Test
-    void deleteAccount() {
-    }*/
 
-    /*@Test
-    void getAccountsList() {
-    }*/
+    @Test
+    @DisplayName("При несовпадении значения входящего UUID и UUID, полученного из сервиса, возвращается ответ - Error")
+    void updateAccount_whenUUINotEqualsIdDto_thenReturnError() {
+        UUID uuid3 = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c47");
+        Account account1 = new Account(uuid3, "a", "БКС", "04");
+        UUID uuid4 = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c48");
+        Account account2 = new Account(uuid4, "a", "БКС", "04");
+
+        Mockito.when(mockAccountService.updateAccount(anyString(), anyString(), anyString(), anyString())).thenReturn(uuid4);
+        ValidationError validationError = new ValidationError(ResponceStatus.WARN,
+                String.format("В системе уже зарегистрирован счёт %s у брокера %s", "04", "БКС"), null);
+        ValidationError result = (ValidationError) accountController.updateAccount(new IdIncomeAccountDto("f21c831f-9807-4de5-88c7-61cfe33e1c47"),
+                new IncomeAccountDto("a", "БКС", "04"));
+        Assertions.assertEquals(validationError.getErrorMessage(), result.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("Вызывается сервис")
+    void deleteAccount_thenUseService() {
+        UUID uuid3 = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c47");
+
+        Mockito.when(mockAccountService.deleteAccount(uuid3.toString())).thenReturn(uuid3);
+
+        accountController.deleteAccount(new IdIncomeAccountDto(uuid3.toString()));
+
+        verify(mockAccountService).deleteAccount(uuid3.toString());
+    }
+
+    @Test
+    @DisplayName("При удалении счета со значением - idDto.isEmpty- возвращается ошибка валидации")
+    void deleteAccount_whenIdDtoIsEmpty_thenReturnValidationError() {
+        List<FieldValidationError> responce = new ArrayList<>();
+        responce.add(new FieldValidationError("id","Поле не может быть пустым"));
+        ValidationError responceError = new ValidationError(ResponceStatus.ERROR, "Не правильный запрос", responce);
+        ValidationError result = (ValidationError) accountController.deleteAccount(new IdIncomeAccountDto(""));
+        Assertions.assertEquals(responceError.getErrorMessage(), result.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("При удалении счета при получении из сервиса значения null возвращается Error")
+    void deleteAccount_whenUUIDisNull_thenReturnError() {
+        Mockito.when(mockAccountService.deleteAccount(anyString())).thenReturn(null);
+        ValidationError validationError = new ValidationError(ResponceStatus.WARN,
+                String.format("Нет счёта с идентификатором %s", "f21c831f-9807-4de5-88c7-61cfe33e1c50"), null);
+        ValidationError result = (ValidationError) accountController.deleteAccount(new IdIncomeAccountDto("f21c831f-9807-4de5-88c7-61cfe33e1c50"));
+        Assertions.assertEquals(validationError.getErrorMessage(), result.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("Вызывается сервис")
+    void getAccountsList_thenUseService() {
+        List<Account> accounts = new ArrayList<>();
+        accounts.add(validAccount1);
+        accounts.add(validAccount2);
+        Mockito.when(mockAccountService.getAccountsList()).thenReturn(accounts);
+        accountController.getAccountsList();
+
+        verify(mockAccountService).getAccountsList();
+    }
+
+    @Test
+    @DisplayName("Вызывается сервис")
+    void getAccountsList_thenReturnDtoList() {
+        List<Account> accounts = new ArrayList<>();
+        accounts.add(validAccount1);
+        accounts.add(validAccount2);
+        Mockito.when(mockAccountService.getAccountsList()).thenReturn(accounts);
+        List<AccountDto> dtos = accounts.stream().map(mapper::toAccountDto).toList();
+
+        OutcomeAccountDto responce = (OutcomeAccountDto)accountController.getAccountsList();
+        List<AccountDto> resultDtos = (List<AccountDto>) responce.getResponce();
+
+        Assertions.assertEquals(dtos.size(), resultDtos.size());
+    }
+
+    @Test
+    @DisplayName("При удалении счета - dto.isEmpty- возвращается ошибка валидации")
+    void getAccountsList_whenIdDtoIsEmpty_thenReturnValidationError() {
+        ValidationError responceError = new ValidationError(ResponceStatus.ERROR, "Список счетов пуст.", null);
+        ValidationError result = (ValidationError) accountController.getAccountsList();
+        Assertions.assertEquals(responceError.getErrorMessage(), result.getErrorMessage());
+    }
 }
