@@ -11,6 +11,15 @@ public class BaseResponce {
         this.responce = responce;
     }
 
+    @Override
+    public String toString() {
+        return "BaseResponce{" +
+                "status=" + status +
+                ", errorMessage='" + errorMessage + '\'' +
+                ", responce=" + responce +
+                '}';
+    }
+
     public ResponceStatus getStatus() {
         return status;
     }
