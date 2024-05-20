@@ -8,5 +8,11 @@ export const accountsConnector = {
   },
   getAccountsList(callBack) {
     instance.post('get-accounts-list').then(response => callBack(response))
+  },
+  getAccountInfo(id, callBack) {
+    instance.post('get-accounts-info', id).then(response => callBack(response))
+  },
+  deleteAccount(id, callBack) {
+    instance.post('delete-account', id).then(response => callBack(response))
   }
 }
