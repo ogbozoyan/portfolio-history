@@ -31,11 +31,15 @@ public class AccountServiceImpl implements AccountService {
         if (!repository.existsById(uuid)) {
             return null;
         }
-        UUID idByNameAndNumber = repository.findByNumber(number).getId();
+        Account account = repository.findByNumber(number);
+        UUID idByNameAndNumber = account.getId();
         if (idByNameAndNumber != uuid) {
             return idByNameAndNumber;
         } else {
-            repository.save(new Account(uuid, name, broker, number));
+            account.setName(name);
+            account.setBroker(broker);
+            account.setNumber(number);
+            repository.save(account);
             return uuid;
         }
     }
