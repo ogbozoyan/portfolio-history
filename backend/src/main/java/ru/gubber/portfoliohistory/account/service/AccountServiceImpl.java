@@ -26,22 +26,25 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public UUID updateAccount(String id, String name, String broker, String number) {
+    public UpdatingResult updateAccount(String id, String name, String broker, String number) {
         UUID uuid = UUID.fromString(id);
-        if (!repository.existsById(uuid)) {
+        Optional<Account> optionalAccount = repository.findById(uuid);
+        if (optionalAccount.isPresent()) {
+            Account account = optionalAccount.get();
+            Optional<Account> byBrokerAndNumber = repository.findByBrokerAndNumber(broker, number);
+            if ((byBrokerAndNumber.isPresent()) && (!byBrokerAndNumber.get().getId().equals(uuid))) {
+                return new UpdatingResult(uuid, UpdateStatus.UNSUCCESSFULLY);
+            } else {
+                account.setName(name);
+                account.setBroker(broker);
+                account.setNumber(number);
+                repository.save(account);
+                return new UpdatingResult(uuid, UpdateStatus.SUCCESSFULLY);
+            }
+        } else {
             return null;
         }
-        Account account = repository.findByNumber(number);
-        UUID idByNameAndNumber = account.getId();
-        if (!idByNameAndNumber.equals(uuid)) {
-            return idByNameAndNumber;
-        } else {
-            account.setName(name);
-            account.setBroker(broker);
-            account.setNumber(number);
-            repository.save(account);
-            return uuid;
-        }
+
     }
 
     @Override

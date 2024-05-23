@@ -11,6 +11,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.gubber.portfoliohistory.account.dto.*;
 import ru.gubber.portfoliohistory.account.model.Account;
 import ru.gubber.portfoliohistory.account.service.AccountService;
+import ru.gubber.portfoliohistory.account.service.UpdateStatus;
+import ru.gubber.portfoliohistory.account.service.UpdatingResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,9 +103,8 @@ class AccountControllerTest {
     @DisplayName("Вызывается сервис")
     void updateAccount_thenUseService() {
         UUID uuid3 = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c47");
-        Account account3 = new Account(uuid3, "БКС3", "БКС", "03");
-
-        Mockito.when(mockAccountService.updateAccount(uuid3.toString(),"БКС3", "БКС", "03")).thenReturn(account3.getId());
+        UpdatingResult updatingResult = new UpdatingResult(uuid3, UpdateStatus.SUCCESSFULLY);
+        Mockito.when(mockAccountService.updateAccount(uuid3.toString(),"БКС3", "БКС", "03")).thenReturn(updatingResult);
 
         accountController.updateAccount(new IncomeFullAccountDto("f21c831f-9807-4de5-88c7-61cfe33e1c47", "БКС3", "БКС", "03"));
         verify(mockAccountService).updateAccount(uuid3.toString(),"БКС3", "БКС", "03");
@@ -123,8 +124,9 @@ class AccountControllerTest {
     @DisplayName("При обновлении данных счета возвращается корректный UUID")
     void updateAccount_whenDtoIsValid_thenReturnUUID() {
         UUID uuid3 = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c47");
+        UpdatingResult updatingResult = new UpdatingResult(uuid3, UpdateStatus.SUCCESSFULLY);
 
-        Mockito.when(mockAccountService.updateAccount(anyString(), anyString(), anyString(), anyString())).thenReturn(uuid3);
+        Mockito.when(mockAccountService.updateAccount(anyString(), anyString(), anyString(), anyString())).thenReturn(updatingResult);
 
         IdOutcomeAccountDto responceResult = (IdOutcomeAccountDto) accountController.updateAccount(new IncomeFullAccountDto(uuid3.toString(), "БКС3", "БКС", "03"));
         ResponceId responce = (ResponceId) responceResult.getResponce();
@@ -144,12 +146,12 @@ class AccountControllerTest {
     }
 
     @Test
-    @DisplayName("При несовпадении значения входящего UUID и UUID, полученного из сервиса, возвращается ответ - Error")
+    @DisplayName("При значении статуса UNSUCCESSFULLY, полученного из сервиса, возвращается ответ - Error")
     void updateAccount_whenUUINotEqualsIdDto_thenReturnError() {
         UUID uuid3 = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c47");
-        UUID uuid4 = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c48");
+        UpdatingResult updatingResult = new UpdatingResult(uuid3, UpdateStatus.UNSUCCESSFULLY);
 
-        Mockito.when(mockAccountService.updateAccount(anyString(), anyString(), anyString(), anyString())).thenReturn(uuid4);
+        Mockito.when(mockAccountService.updateAccount(anyString(), anyString(), anyString(), anyString())).thenReturn(updatingResult);
         ValidationError validationError = new ValidationError(ResponceStatus.WARN,
                 String.format("В системе уже зарегистрирован счёт %s у брокера %s", "04", "БКС"), null);
         ValidationError result = (ValidationError) accountController.updateAccount(new IncomeFullAccountDto(uuid3.toString(), "a", "БКС", "04"));

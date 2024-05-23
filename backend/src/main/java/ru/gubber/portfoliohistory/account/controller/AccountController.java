@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.gubber.portfoliohistory.account.dto.*;
 import ru.gubber.portfoliohistory.account.model.Account;
 import ru.gubber.portfoliohistory.account.service.AccountService;
+import ru.gubber.portfoliohistory.account.service.UpdateStatus;
+import ru.gubber.portfoliohistory.account.service.UpdatingResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,9 +54,11 @@ public class AccountController {
             validationDto(dto.name(), dto.broker(), dto.number(), responce);
             return new ValidationError(ResponceStatus.ERROR, "Не правильный запрос", responce);
         }
-        UUID uuid = accountService.updateAccount(dto.id(), dto.name(), dto.broker(), dto.number());
-        if (uuid != null) {
-            if (uuid.toString().equals(dto.id())) {
+        UpdatingResult updatingResult = accountService.updateAccount(dto.id(), dto.name(), dto.broker(), dto.number());
+        if (updatingResult != null) {
+            UUID uuid = updatingResult.uuid();
+
+            if (updatingResult.status().equals(UpdateStatus.SUCCESSFULLY)) {
                 return new IdOutcomeAccountDto(new ResponceId(uuid));
             } else {
                 return new ValidationError(ResponceStatus.WARN,
