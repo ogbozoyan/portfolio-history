@@ -1,14 +1,24 @@
 <template>
   <div class="q-pa-md q-gutter-y-sm">
     <div class="text-h6 row">
-      <div class="col">
+      <div class="col text-h4">
         {{ store.currentAccount.name }}
       </div>
       <div class="col-auto q-pr-xs">
-        <q-btn round color="primary" icon="edit" @click="accountDialogShown = true"/>
+        <q-btn round
+               size="sm"
+               icon="edit"
+               @click="accountDialogShown = true"
+               title="Изменить счёт"
+        />
       </div>
       <div class="col-auto">
-        <q-btn round color="primary" icon="delete" @click="deleteAccount()"/>
+        <q-btn round
+               size="sm"
+               icon="delete"
+               @click="deleteAccount()"
+               title="Удалить счёт"
+        />
       </div>
     </div>
     <q-separator/>
@@ -22,7 +32,7 @@
   <q-dialog v-model="accountDialogShown">
     <q-card>
       <q-card-section>
-        <div class="text-h6">Создать новый счёт</div>
+        <div class="text-h6">Изменить счёт</div>
       </q-card-section>
 
       <q-card-section class="q-pt-none">
@@ -34,7 +44,7 @@
       </q-card-section>
 
       <q-card-actions align="right">
-        <q-btn flat label="Создать" color="primary" @click="save" type="a"/>
+        <q-btn flat label="Сохранить" color="primary" @click="save" type="a"/>
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -54,6 +64,10 @@ const accountName = ref("")
 const accountBroker = ref("")
 const accountNumber = ref("")
 
+const props = defineProps({
+  accountId: String
+})
+
 function initFields(name, broker, number) {
   accountName.value = name
   accountBroker.value = broker
@@ -64,8 +78,16 @@ store.$subscribe( (mutation, store) =>{
     initFields(store.currentAccount.name, store.currentAccount.broker, store.currentAccount.number )
   }
 )
+
+function initPage() {
+  store.chooseAccount(props.accountId)
+}
+
+watch(props, (nv) =>{
+  initPage()
+})
 onMounted(() => {
-  store.chooseAccount(route.params.accountId)
+  initPage()
 })
 function deleteAccount() {
   store.deleteAccount(store.currentAccount.id)

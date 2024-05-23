@@ -1,13 +1,22 @@
 <template>
   <q-list>
-    <q-item-label header>
+    <q-item-label header class="text-h5">
       Список Счетов
     </q-item-label>
     <q-item v-for="account in store.accounts" v-bind="account" :key="account.id">
       <router-link :to="'/account/' + account.id" >{{account.name}}</router-link>
     </q-item>
     <br />
-    <q-btn flat :ripple="false" :push="true" label="Добавить счёт" @click="addAccountDialogOpe = true"/>
+
+    <q-page-sticky position="bottom-right" :offset="[18, 18]">
+      <q-btn
+        round
+        icon="add"
+        @click="addAccountDialogOpe = true"
+        title="Добавить новый счёт"
+        size="md"
+      />
+    </q-page-sticky>
   </q-list>
   <q-dialog v-model="addAccountDialogOpe">
     <q-card>

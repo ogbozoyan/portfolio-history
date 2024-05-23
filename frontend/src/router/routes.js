@@ -6,7 +6,8 @@ const routes = [
       {path: '', component: () => import('pages/IndexPage.vue')},
       {
         path: 'account/:accountId',
-        component: () => import('pages/AccountView.vue')
+        component: () => import('pages/AccountView.vue'),
+        props: true
       }
     ]
   },
