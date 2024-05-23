@@ -33,7 +33,7 @@ public class AccountServiceImpl implements AccountService {
         }
         Account account = repository.findByNumber(number);
         UUID idByNameAndNumber = account.getId();
-        if (idByNameAndNumber != uuid) {
+        if (!idByNameAndNumber.equals(uuid)) {
             return idByNameAndNumber;
         } else {
             account.setName(name);
