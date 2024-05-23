@@ -14,5 +14,8 @@ export const accountsConnector = {
   },
   deleteAccount(id, callBack) {
     instance.post('delete-account', id).then(response => callBack(response))
+  },
+  updateAccount(accountInfo, callBack) {
+    instance.post('update-account', accountInfo).then(response => callBack(response))
   }
 }

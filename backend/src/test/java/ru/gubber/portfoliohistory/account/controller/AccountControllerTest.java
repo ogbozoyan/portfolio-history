@@ -228,7 +228,7 @@ class AccountControllerTest {
     void getAccountsInfo_thenReturnDto() {
         Mockito.when(mockAccountService.getAccountsInfo(anyString())).thenReturn(validAccount1);
 
-        BaseResponce accountsInfo = accountController.getAccountsInfo(new IdIncomeAccountDto(validAccount1.getId().toString()));
+        BaseResponse accountsInfo = accountController.getAccountsInfo(new IdIncomeAccountDto(validAccount1.getId().toString()));
         AccountDto responce = (AccountDto) accountsInfo.getResponce();
 
         Assertions.assertAll(

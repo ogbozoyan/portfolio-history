@@ -7,10 +7,13 @@ export const accountsStore = defineStore('accounts', {
     currentAccount: {}
   }),
   actions: {
-    loadAccountsList() {
+    loadAccountsList(accountId) {
       accountsConnector.getAccountsList(
         resp => {
           this.accounts = resp.data.response
+          if (accountId) {
+            this.chooseAccount(accountId)
+          }
         }
       )
     },
@@ -20,10 +23,11 @@ export const accountsStore = defineStore('accounts', {
       if (filtered.length === 1) {
         this.currentAccount = filtered[0]
       }
+      // let self = this
       accountsConnector.getAccountInfo(
         {id: accountId},
         (resp) => {
-          this.currencAccount = resp.data.response
+          this.currentAccount = resp.data.response
         }
       )
     },
@@ -33,6 +37,20 @@ export const accountsStore = defineStore('accounts', {
         {id: accountId},
         (resp) => {
           this.loadAccountsList()
+        }
+      )
+    },
+    updateAccount(accountId, name, broker, number) {
+      this.currentAccount = {}
+      accountsConnector.updateAccount(
+        {
+          id: accountId,
+          name: name,
+          broker: broker,
+          number: number
+        },
+        (resp) => {
+          this.loadAccountsList(accountId)
         }
       )
     },

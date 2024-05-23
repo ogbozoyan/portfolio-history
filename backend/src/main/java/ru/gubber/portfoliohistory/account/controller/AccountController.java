@@ -25,7 +25,7 @@ public class AccountController {
     }
 
     @PostMapping("/api/v1/create-account")
-    public BaseResponce createAccount(@RequestBody IncomeAccountDto dto) {
+    public BaseResponse createAccount(@RequestBody IncomeAccountDto dto) {
         log.info("Получен запрос на добавление счета {}.", dto.name());
         if (dto.name().isEmpty() || dto.broker().isEmpty() || dto.number().isEmpty()) {
             List<FieldValidationError> responce = new ArrayList<>();
@@ -42,7 +42,7 @@ public class AccountController {
     }
 
     @PostMapping("/api/v1/update-account")
-    public BaseResponce updateAccount(@RequestBody IncomeFullAccountDto dto) {
+    public BaseResponse updateAccount(@RequestBody IncomeFullAccountDto dto) {
         log.info("Получен запрос на обновление счета {}.", dto.name());
         if (dto.id().isEmpty() || dto.name().isEmpty() || dto.broker().isEmpty() || dto.number().isEmpty()) {
             List<FieldValidationError> responce = new ArrayList<>();
@@ -67,7 +67,7 @@ public class AccountController {
     }
 
     @PostMapping("/api/v1/delete-account")
-    public BaseResponce deleteAccount(@RequestBody IdIncomeAccountDto dto) {
+    public BaseResponse deleteAccount(@RequestBody IdIncomeAccountDto dto) {
         log.info("Получен запрос на удаление счета {}.", dto.id());
         if (dto.id().isEmpty()) {
             List<FieldValidationError> responce = new ArrayList<>();
@@ -84,7 +84,7 @@ public class AccountController {
     }
 
     @PostMapping("/api/v1/get-accounts-list")
-    public BaseResponce getAccountsList() {
+    public BaseResponse getAccountsList() {
         log.info("Получен запрос на предоставление списка всех счетов.");
         List<AccountDto> dtos = accountService.getAccountsList().stream().map(mapper::toAccountDto).collect(Collectors.toList());
         if (dtos.isEmpty()) {
@@ -94,7 +94,7 @@ public class AccountController {
     }
 
     @PostMapping("/api/v1/get-accounts-info")
-    public BaseResponce getAccountsInfo(@RequestBody IdIncomeAccountDto dto) {
+    public BaseResponse getAccountsInfo(@RequestBody IdIncomeAccountDto dto) {
         log.info("Получен запрос на предоставление информации о счете с Id {}", dto.id());
         if (dto.id().isEmpty()) {
             List<FieldValidationError> responce = new ArrayList<>();
@@ -104,7 +104,7 @@ public class AccountController {
         Account accountsInfo = accountService.getAccountsInfo(dto.id());
         if (accountsInfo != null) {
             AccountDto result = mapper.toAccountDto(accountsInfo);
-            return new BaseResponce(ResponceStatus.SUCCESS, null, result);
+            return new BaseResponse(ResponceStatus.SUCCESS, null, result);
         } else {
             return new ValidationError(ResponceStatus.WARN,
                     String.format("Нет счёта с идентификатором %s", dto.id()), null);

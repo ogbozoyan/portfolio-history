@@ -34,7 +34,6 @@
 <script setup>
 import {onMounted, ref} from "vue";
 import {accountsStore} from "stores/accounts.js";
-import Router from "src/router/index.js";
 
 const addAccountDialogOpe = ref(false)
 const newAccountName = ref("")

@@ -1,11 +1,11 @@
 package ru.gubber.portfoliohistory.account.dto;
 
-public class BaseResponce {
+public class BaseResponse {
     private final ResponceStatus status;
     private String errorMessage;
     private Object response;
 
-    public BaseResponce(ResponceStatus status, String errorMessage, Object response) {
+    public BaseResponse(ResponceStatus status, String errorMessage, Object response) {
         this.status = status;
         this.errorMessage = errorMessage;
         this.response = response;
@@ -13,10 +13,10 @@ public class BaseResponce {
 
     @Override
     public String toString() {
-        return "BaseResponce{" +
+        return "BaseResponse{" +
                 "status=" + status +
                 ", errorMessage='" + errorMessage + '\'' +
-                ", responce=" + responce +
+                ", response=" + response +
                 '}';
     }
 
