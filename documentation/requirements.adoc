@@ -204,7 +204,7 @@ POST /api/v1/get-accounts-list
 Content-Type: appliction/json
 
 {
-    status: "SUCCESS"
+    status: "SUCCESS",
     responce: {
         list: [
             {
@@ -222,5 +222,47 @@ Content-Type: appliction/json
             ...
         ]
     }
+}
+----
+
+==== 2.10.5 Получение подробной информации о счёте
+
+Система должна возвращать подробную информацию о счёте
+
+[source, rest]
+----
+POST /api/v1/get-accounts-info
+
+{
+    id: <идентификатор счёта>
+}
+----
+
+В результате успеха необходимо вернуть ответ
+
+[source, rest]
+----
+Content-Type: appliction/json
+
+{
+    status: "SUCCESS",
+    responce: {
+        id: <идентификатор счёта>,
+        name: <Название>,
+        broker: <Название брокера>,
+        number: <номер у брокера>
+    }
+}
+----
+
+Если счёт не был найден необходимо вернуть ошибку
+
+[source, rest]
+----
+Content-Type: appliction/json
+
+{
+    status: "WARN",
+    errorMessage: "Нет счёта с идентификатором <id>"
 }
 ----
