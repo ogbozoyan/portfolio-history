@@ -147,14 +147,12 @@ class AccountControllerTest {
     @DisplayName("При несовпадении значения входящего UUID и UUID, полученного из сервиса, возвращается ответ - Error")
     void updateAccount_whenUUINotEqualsIdDto_thenReturnError() {
         UUID uuid3 = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c47");
-        Account account1 = new Account(uuid3, "a", "БКС", "04");
         UUID uuid4 = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c48");
-        Account account2 = new Account(uuid4, "a", "БКС", "04");
 
         Mockito.when(mockAccountService.updateAccount(anyString(), anyString(), anyString(), anyString())).thenReturn(uuid4);
         ValidationError validationError = new ValidationError(ResponceStatus.WARN,
                 String.format("В системе уже зарегистрирован счёт %s у брокера %s", "04", "БКС"), null);
-        ValidationError result = (ValidationError) accountController.updateAccount(new IncomeFullAccountDto("f21c831f-9807-4de5-88c7-61cfe33e1c47", "a", "БКС", "04"));
+        ValidationError result = (ValidationError) accountController.updateAccount(new IncomeFullAccountDto(uuid3.toString(), "a", "БКС", "04"));
         Assertions.assertEquals(validationError.getErrorMessage(), result.getErrorMessage());
     }
 
