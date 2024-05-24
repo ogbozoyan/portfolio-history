@@ -11,12 +11,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.gubber.portfoliohistory.account.model.Account;
 import ru.gubber.portfoliohistory.account.repository.AccountRepository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,8 +28,8 @@ class AccountServiceImplTest {
     AccountServiceImpl accountService;
     @Mock
     AccountRepository mockRepository;
-    private UUID uuid1 = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c46");
-    private Account validAccount1 = new Account(uuid1, "БКС1", "БКС", "01");
+    private final UUID uuid1 = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c46");
+    private final Account validAccount1 = new Account(uuid1, "БКС1", "БКС", "01");
 
     @Test
     @DisplayName("При создании счета с именем и номером, которые уже существуют у другого счета в базе, получение null.")
@@ -35,7 +38,7 @@ class AccountServiceImplTest {
 
         UUID uuid = accountService.createAccount("БКС1", "БКС", "01");
 
-        Assertions.assertEquals(null, uuid);
+        Assertions.assertNull(uuid);
     }
 
     @Test
@@ -94,15 +97,55 @@ class AccountServiceImplTest {
         Assertions.assertEquals(updatingResult.status(), result.status());
     }
 
-    /*@Test
-    void deleteAccount() {
-    }*/
+    @Test
+    @DisplayName("При заданом UUID счет не найден - вернуть null")
+    void deleteAccount_whenAccountNotFound_thenReturnNull() {
+        Mockito.when(mockRepository.existsById(any())).thenReturn(false);
 
-    /*@Test
-    void getAccountsList() {
-    }*/
+        UUID uuid = accountService.deleteAccount("f21c831f-9807-4de5-88c7-61cfe33e1c90");
 
-    /*@Test
-    void getAccountsInfo() {
-    }*/
+        Assertions.assertNull(uuid);
+    }
+
+    @Test
+    @DisplayName("При заданом UUID счет найден (true) - вызывается метод репозитория")
+    void deleteAccount_whenAccountIsFound_thenReturn() {
+        Mockito.when(mockRepository.existsById(any())).thenReturn(true);
+
+        accountService.deleteAccount("f21c831f-9807-4de5-88c7-61cfe33e1c90");
+        verify(mockRepository, times(1)).deleteById(UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c90"));
+    }
+
+    @Test
+    @DisplayName("Успешное получение списка счетов длиной 2.")
+    void getAccountsList_thenReturnList() {
+        List<Account> accounts = new ArrayList<>();
+        UUID uuid2 = UUID.fromString("b1acc051-ea56-4ffc-a249-67010f8dd132");
+        Account validAccount2 = new Account(uuid2, "БКС2", "БКС", "02");
+        accounts.add(validAccount1);
+        accounts.add(validAccount2);
+        Mockito.when(mockRepository.findAll()).thenReturn(accounts);
+
+        List<Account> accountsResult = accountService.getAccountsList();
+
+        Assertions.assertEquals(accounts.size(), accountsResult.size());
+    }
+
+    @Test
+    @DisplayName("Успешное получение информации о счете.")
+    void getAccountsInfo_whenAccountIsFound_thenReturnAccount() {
+        Optional<Account> optionalAccount = Optional.of(validAccount1);
+        Mockito.when(mockRepository.findById(any())).thenReturn(optionalAccount);
+
+        Account accountsInfo = accountService.getAccountsInfo(validAccount1.getId().toString());
+
+        Assertions.assertAll(
+                () -> {
+                    assertEquals(validAccount1.getId(), accountsInfo.getId());
+                    assertEquals(validAccount1.getName(), accountsInfo.getName());
+                    assertEquals(validAccount1.getBroker(), accountsInfo.getBroker());
+                    assertEquals(validAccount1.getNumber(), accountsInfo.getNumber());
+                }
+        );
+    }
 }
