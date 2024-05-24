@@ -42,7 +42,7 @@ public class AccountServiceImpl implements AccountService {
                 return new UpdatingResult(uuid, UpdateStatus.SUCCESSFULLY);
             }
         } else {
-            return null;
+            return new UpdatingResult(uuid, UpdateStatus.ITEM_NOT_FOUND);
         }
 
     }

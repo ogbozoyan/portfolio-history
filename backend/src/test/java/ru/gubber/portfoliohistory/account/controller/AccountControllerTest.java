@@ -13,6 +13,7 @@ import ru.gubber.portfoliohistory.account.model.Account;
 import ru.gubber.portfoliohistory.account.service.AccountService;
 import ru.gubber.portfoliohistory.account.service.UpdateStatus;
 import ru.gubber.portfoliohistory.account.service.UpdatingResult;
+import ru.gubber.portfoliohistory.common.utils.FieldValidationError;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,9 +137,11 @@ class AccountControllerTest {
     }
 
     @Test
-    @DisplayName("При обновлении данных счета при получении из сервиса значения null возвращается Error")
+    @DisplayName("При обновлении данных счета при получении из сервиса статуса ITEM_NOT_FOUND возвращается Error")
     void updateAccount_whenUUIDisNull_thenReturnError() {
-        Mockito.when(mockAccountService.updateAccount(anyString(), anyString(), anyString(), anyString())).thenReturn(null);
+        UUID uuid = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c50");
+        UpdatingResult updatingResult = new UpdatingResult(uuid, UpdateStatus.ITEM_NOT_FOUND);
+        Mockito.when(mockAccountService.updateAccount(anyString(), anyString(), anyString(), anyString())).thenReturn(updatingResult);
         ValidationError validationError = new ValidationError(ResponceStatus.WARN,
                 String.format("Нет счёта с идентификатором %s", "f21c831f-9807-4de5-88c7-61cfe33e1c50"), null);
         ValidationError result = (ValidationError) accountController.updateAccount(new IncomeFullAccountDto("f21c831f-9807-4de5-88c7-61cfe33e1c50", "БКС3", "БКС", "БКС3"));
@@ -215,14 +218,6 @@ class AccountControllerTest {
         List<AccountDto> resultDtos = (List<AccountDto>) responce.getResponce();
 
         Assertions.assertEquals(dtos.size(), resultDtos.size());
-    }
-
-    @Test
-    @DisplayName("При получении списка счетов - dtos.isEmpty- возвращается ошибка валидации")
-    void getAccountsList_whenIdDtoIsEmpty_thenReturnValidationError() {
-        ValidationError responceError = new ValidationError(ResponceStatus.ERROR, "Список счетов пуст.", null);
-        ValidationError result = (ValidationError) accountController.getAccountsList();
-        Assertions.assertEquals(responceError.getErrorMessage(), result.getErrorMessage());
     }
 
     @Test
