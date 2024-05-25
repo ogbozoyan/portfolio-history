@@ -3,6 +3,7 @@ package ru.gubber.portfoliohistory.account.service;
 import org.springframework.stereotype.Service;
 import ru.gubber.portfoliohistory.account.model.Account;
 import ru.gubber.portfoliohistory.account.repository.AccountRepository;
+import ru.gubber.portfoliohistory.common.utils.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +22,10 @@ public class AccountServiceImpl implements AccountService {
         if (repository.existsByNameAndNumber(name, number)) {
             return null;
         }
-        Account newAccount = repository.save(new Account(UUID.randomUUID(), name, broker, number));
+        String newName = StringUtils.cut(name, 50);
+        String newBroker = StringUtils.cut(broker, 100);
+        String newNumber = StringUtils.cut(number, 50);
+        Account newAccount = repository.save(new Account(UUID.randomUUID(), newName, newBroker, newNumber));
         return newAccount.getId();
     }
 
@@ -37,9 +41,12 @@ public class AccountServiceImpl implements AccountService {
         if ((byBrokerAndNumber.isPresent()) && (!byBrokerAndNumber.get().getId().equals(uuid))) {
             return new UpdatingResult(uuid, UpdateStatus.UNSUCCESSFULLY);
         } else {
-            account.setName(name);
-            account.setBroker(broker);
-            account.setNumber(number);
+            String newName = StringUtils.cut(name, 50);
+            String newBroker = StringUtils.cut(broker, 100);
+            String newNumber = StringUtils.cut(number, 50);
+            account.setName(newName);
+            account.setBroker(newBroker);
+            account.setNumber(newNumber);
             repository.save(account);
             return new UpdatingResult(uuid, UpdateStatus.SUCCESSFULLY);
             }
