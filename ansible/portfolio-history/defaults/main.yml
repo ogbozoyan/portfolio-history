@@ -1,0 +1,10 @@
+---
+ansible_user: "{{ lookup('env', 'ANSIBLE_USER') }}"
+ansible_password: "{{ lookup('env', 'ANSIBLE_PASSWORD') }}"
+
+application_path: /opt/portfolio-history
+backend_image: "{{ lookup('env', 'BACKEND_IMAGE') }}"
+database_url: "{{ lookup('env', 'DATABASE_URL') }}"
+database_user: "{{ lookup('env', 'DATABASE_USER') }}"
+database_pass: "{{ lookup('env', 'DATABASE_PASS') }}"
+...

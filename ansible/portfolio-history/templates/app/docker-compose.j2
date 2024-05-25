@@ -1,0 +1,15 @@
+version: '3.0'
+services:
+  backend:
+    restart: always
+    image: '{{ backend_image }}'
+    env_file:
+      - ./config/configuration.env
+    networks:
+      - ext_network
+    ports:
+      - "8080:8080"
+networks:
+  ext_network:
+    name: portfolio-network
+    external: true

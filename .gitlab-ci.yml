@@ -1,6 +1,60 @@
+include:
+  - project: 'financial/cicd'
+    ref: master
+    file: .java-steps.yaml
+  - project: 'financial/cicd'
+    ref: master
+    file: .rules.yaml
+  - project: 'financial/cicd'
+    ref: master
+    file: .docker-steps.yaml
+
 stages:
   - test
+  - build
+  - publish
+  - deploy
 
 backend-test:
   stage: test
-  script: echo "Hello world!!!"
+  extends: .maven-test
+  variables:
+    MODULE_PATH: backend
+
+backend-build:
+  stage: build
+  extends:
+    - .maven-build
+    - .master
+  variables:
+    MODULE_PATH: backend
+    JAR_NAME: portfolio-history.jar
+
+backend-publish:
+  stage: publish
+  extends:
+    - .docker-build-deploy
+    - .master
+  needs:
+    - job: backend-build
+      artifacts: true
+  variables:
+    MODULE_NAME: backend
+    IMAGE_NAME: portfolio-history/backend
+    JAR_NAME: portfolio-history.jar
+    SOURCE_PATH: $CI_PROJECT_DIR/$MODULE_NAME/target/$JAR_NAME
+    BUILD_DIR_PATH: $CI_PROJECT_DIR/$MODULE_NAME/docker/
+
+deploy:
+  image: litmuschaos/ansible-runner
+  extends:
+    - .master
+  script:
+    - cd ansible
+    - cp $INVENTORY inventory.yaml
+    - cat inventory.yaml
+    - export ANSIBLE_CONFIG=ansible.cfg
+    - ansible --version
+    - ansible-inventory --graph
+    - ansible-playbook deploy-ph.yaml --extra-vars "ansible_sudo_pass=${ANSIBLE_PASSWORD}"
+  stage: deploy
