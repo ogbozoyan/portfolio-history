@@ -1,0 +1,60 @@
+---
+
+- name: Check server avaliability
+  ping:
+
+- name: Create root folder for application
+  file:
+    path:           "{{ application_path }}"
+    state:          directory
+    mode:           0755
+
+#- name: Create data folder for application
+#  file:
+#    path:           "{{ application_path }}/data"
+#    state:          directory
+#    mode:           0755
+
+- name: Create configuration folder for application
+  file:
+    path:           "{{ application_path }}/config"
+    state:          directory
+    mode:           0755
+
+- name: Pull applications' images
+  shell:            docker network create --driver=bridge --subnet=172.0.0.0/24 --gateway=172.0.0.1 portfolio-network
+  ignore_errors:    true
+
+- name: Stop application
+  shell:            docker-compose -f {{ application_path }}/docker-compose.yaml stop
+  ignore_errors:    true
+
+- name: Generate docker-compose
+  template:
+    src:            "app/docker-compose.j2"
+    dest:           "{{ application_path }}/docker-compose.yaml"
+    mode:           '0666'
+
+- name: Generate docker-compose
+  template:
+    src:            "app/conf/env.j2"
+    dest:           "{{ application_path }}/config/configuration.env"
+    mode:           '0666'
+
+- name: Pull applications' images
+  shell:            docker-compose -f {{ application_path }}/docker-compose.yaml pull
+
+- name: Start application
+  shell:            docker-compose -f {{ application_path }}/docker-compose.yaml up -d
+
+#- name: Copy nginx config files
+#  copy:
+#    src:            "{{ role_path }}/files/nginx/"
+#    dest:           "/etc/nginx/conf.d"
+#    directory_mode: yes
+#    mode:           0666
+#
+#- name: restart NGINX servce
+#  service:
+#    name:           nginx
+#    state:          restarted
