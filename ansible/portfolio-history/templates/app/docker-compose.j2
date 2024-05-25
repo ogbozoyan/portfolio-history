@@ -9,6 +9,13 @@ services:
       - ext_network
     ports:
       - "8080:8080"
+  frontend:
+    restart: always
+    image: '{{ frontend_image }}'
+    networks:
+      - ext_network
+    ports:
+      - "8081:8888"
 networks:
   ext_network:
     name: portfolio-network

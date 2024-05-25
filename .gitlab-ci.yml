@@ -8,6 +8,9 @@ include:
   - project: 'financial/cicd'
     ref: master
     file: .docker-steps.yaml
+  - project: 'financial/cicd'
+    ref: master
+    file: .nodejs-steps.yaml
 
 stages:
   - test
@@ -17,9 +20,17 @@ stages:
 
 backend-test:
   stage: test
-  extends: .maven-test
+  extends: 
+    - .maven-test
   variables:
     MODULE_PATH: backend
+
+frontend-test:
+  stage: test
+  extends: 
+    - .node-test
+  variables:
+    MODULE_PATH: frontend
 
 backend-build:
   stage: build
@@ -29,6 +40,14 @@ backend-build:
   variables:
     MODULE_PATH: backend
     JAR_NAME: portfolio-history.jar
+
+frontend-build:
+  stage: build
+  extends:
+    - .node-build
+    - .master
+  variables:
+    MODULE_PATH: frontend
 
 backend-publish:
   stage: publish
@@ -44,6 +63,21 @@ backend-publish:
     JAR_NAME: portfolio-history.jar
     SOURCE_PATH: $CI_PROJECT_DIR/$MODULE_NAME/target/$JAR_NAME
     BUILD_DIR_PATH: $CI_PROJECT_DIR/$MODULE_NAME/docker/
+
+frontend-publish:
+  stage: publish
+  extends:
+    - .docker-build-deploy
+    - .master
+  needs:
+    - job: frontend-build
+      artifacts: true
+  variables:
+    MODULE_NAME: frontend
+    IMAGE_NAME: portfolio-history/frontend
+    SOURCE_PATH: $CI_PROJECT_DIR/$MODULE_NAME/dist/spa
+    BUILD_DIR_PATH: $CI_PROJECT_DIR/$MODULE_NAME/docker/
+    COPY_FOLDER_FLAG: -r
 
 deploy:
   image: litmuschaos/ansible-runner

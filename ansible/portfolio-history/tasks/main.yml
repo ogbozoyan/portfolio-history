@@ -9,11 +9,16 @@
     state:          directory
     mode:           0755
 
-#- name: Create data folder for application
-#  file:
-#    path:           "{{ application_path }}/data"
-#    state:          directory
-#    mode:           0755
+- name: Install Nginx Web Server on Debian Family
+  apt:
+    name=nginx
+    state=latest
+
+- name: Start and enable nginx service
+  systemd:
+    name: nginx
+    enabled: yes
+    state: started
 
 - name: Create configuration folder for application
   file:
@@ -47,14 +52,14 @@
 - name: Start application
   shell:            docker-compose -f {{ application_path }}/docker-compose.yaml up -d
 
-#- name: Copy nginx config files
-#  copy:
-#    src:            "{{ role_path }}/files/nginx/"
-#    dest:           "/etc/nginx/conf.d"
-#    directory_mode: yes
-#    mode:           0666
-#
-#- name: restart NGINX servce
-#  service:
-#    name:           nginx
-#    state:          restarted
+- name: Copy nginx config files
+  copy:
+    src:            "{{ role_path }}/files/nginx/"
+    dest:           "/etc/nginx/sites-enabled"
+    directory_mode: yes
+    mode:           0666
+
+- name: restart NGINX servce
+  service:
+    name:           nginx
+    state:          restarted
