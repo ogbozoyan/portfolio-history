@@ -8,9 +8,13 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.gubber.portfoliohistory.account.dto.*;
 import ru.gubber.portfoliohistory.account.model.Account;
 import ru.gubber.portfoliohistory.account.service.AccountService;
+import ru.gubber.portfoliohistory.account.service.UpdatingResult;
+import ru.gubber.portfoliohistory.common.utils.FieldValidationError;
+import ru.gubber.portfoliohistory.common.utils.ValidationUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -27,16 +31,19 @@ public class AccountController {
     @PostMapping("/api/v1/create-account")
     public BaseResponse createAccount(@RequestBody IncomeAccountDto dto) {
         log.info("Получен запрос на добавление счета {}.", dto.name());
-        if (dto.name().isEmpty() || dto.broker().isEmpty() || dto.number().isEmpty()) {
-            List<FieldValidationError> responce = new ArrayList<>();
-            validationDto(dto.name(), dto.broker(), dto.number(), responce);
-            return new ValidationError(ResponceStatus.ERROR, "Не правильный запрос", responce);
+        List<FieldValidationError> invalidField = new ArrayList<>();
+        invalidField.add(ValidationUtils.validateStringField(dto.name()));
+        invalidField.add(ValidationUtils.validateStringField(dto.broker()));
+        invalidField.add(ValidationUtils.validateStringField(dto.number()));
+        List<FieldValidationError> validationErrors = invalidField.stream().filter(Objects::nonNull).toList();
+        if (!validationErrors.isEmpty()) {
+            return new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", validationErrors);
         }
         UUID uuid = accountService.createAccount(dto.name(), dto.broker(), dto.number());
         if (uuid != null) {
-            return new IdOutcomeAccountDto(new ResponceId(uuid));
+            return new IdOutcomeAccountDto(new ResponseId(uuid));
         } else {
-            return new ValidationError(ResponceStatus.WARN,
+            return new ValidationError(ResponseStatus.WARN,
                     String.format("В системе уже зарегистрирован счёт %s у брокера %s", dto.number(), dto.broker()), null);
         }
     }
@@ -44,41 +51,46 @@ public class AccountController {
     @PostMapping("/api/v1/update-account")
     public BaseResponse updateAccount(@RequestBody IncomeFullAccountDto dto) {
         log.info("Получен запрос на обновление счета {}.", dto.name());
-        if (dto.id().isEmpty() || dto.name().isEmpty() || dto.broker().isEmpty() || dto.number().isEmpty()) {
-            List<FieldValidationError> responce = new ArrayList<>();
-            if (dto.id().isEmpty()) {
-                responce.add(new FieldValidationError("id", "Поле не может быть пустым"));
+        List<FieldValidationError> invalidField = new ArrayList<>();
+        invalidField.add(ValidationUtils.validateStringField(dto.id()));
+        invalidField.add(ValidationUtils.validateStringField(dto.name()));
+        invalidField.add(ValidationUtils.validateStringField(dto.broker()));
+        invalidField.add(ValidationUtils.validateStringField(dto.number()));
+        List<FieldValidationError> validationErrors = invalidField.stream().filter(Objects::nonNull).toList();
+        if (!validationErrors.isEmpty()) {
+                return new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", validationErrors);
             }
-            validationDto(dto.name(), dto.broker(), dto.number(), responce);
-            return new ValidationError(ResponceStatus.ERROR, "Не правильный запрос", responce);
-        }
-        UUID uuid = accountService.updateAccount(dto.id(), dto.name(), dto.broker(), dto.number());
-        if (uuid != null) {
-            if (uuid.toString().equals(dto.id())) {
-                return new IdOutcomeAccountDto(new ResponceId(uuid));
-            } else {
-                return new ValidationError(ResponceStatus.WARN,
+        UpdatingResult updatingResult = accountService.updateAccount(dto.id(), dto.name(), dto.broker(), dto.number());
+        switch (updatingResult.status()) {
+            case UNSUCCESSFULLY -> {
+                return new ValidationError(ResponseStatus.WARN,
                         String.format("В системе уже зарегистрирован счёт %s у брокера %s", dto.number(), dto.broker()), null);
             }
-        } else {
-            return new ValidationError(ResponceStatus.WARN,
-                    String.format("Нет счёта с идентификатором %s", dto.id()), null);
+            case ITEM_NOT_FOUND -> {
+                return new ValidationError(ResponseStatus.WARN,
+                        String.format("Нет счёта с идентификатором %s", dto.id()), null);
+            }
+            default -> {
+                return   new IdOutcomeAccountDto(new ResponseId(updatingResult.uuid()));
+            }
+
         }
     }
 
     @PostMapping("/api/v1/delete-account")
     public BaseResponse deleteAccount(@RequestBody IdIncomeAccountDto dto) {
         log.info("Получен запрос на удаление счета {}.", dto.id());
-        if (dto.id().isEmpty()) {
-            List<FieldValidationError> responce = new ArrayList<>();
-            responce.add(new FieldValidationError("id", "Поле не может быть пустым"));
-            return new ValidationError(ResponceStatus.ERROR, "Не правильный запрос", responce);
+        List<FieldValidationError> invalidField = new ArrayList<>();
+        invalidField.add(ValidationUtils.validateStringField(dto.id()));
+        List<FieldValidationError> validationErrors = invalidField.stream().filter(Objects::nonNull).toList();
+        if (!validationErrors.isEmpty()) {
+            return new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", validationErrors);
         }
         UUID uuid = accountService.deleteAccount(dto.id());
         if (uuid != null) {
-            return new IdOutcomeAccountDto(new ResponceId(uuid));
+            return new IdOutcomeAccountDto(new ResponseId(uuid));
         } else {
-            return new ValidationError(ResponceStatus.WARN,
+            return new ValidationError(ResponseStatus.WARN,
                     String.format("Нет счёта с идентификатором %s", dto.id()), null);
         }
     }
@@ -87,40 +99,25 @@ public class AccountController {
     public BaseResponse getAccountsList() {
         log.info("Получен запрос на предоставление списка всех счетов.");
         List<AccountDto> dtos = accountService.getAccountsList().stream().map(mapper::toAccountDto).collect(Collectors.toList());
-        if (dtos.isEmpty()) {
-            return new ValidationError(ResponceStatus.WARN, "Список счетов пуст.", null);
-        }
         return new OutcomeAccountDto(dtos);
     }
 
     @PostMapping("/api/v1/get-accounts-info")
     public BaseResponse getAccountsInfo(@RequestBody IdIncomeAccountDto dto) {
         log.info("Получен запрос на предоставление информации о счете с Id {}", dto.id());
-        if (dto.id().isEmpty()) {
-            List<FieldValidationError> responce = new ArrayList<>();
-            responce.add(new FieldValidationError("id", "Поле не может быть пустым"));
-            return new ValidationError(ResponceStatus.ERROR, "Не правильный запрос", responce);
+        List<FieldValidationError> invalidField = new ArrayList<>();
+        invalidField.add(ValidationUtils.validateStringField(dto.id()));
+        List<FieldValidationError> validationErrors = invalidField.stream().filter(Objects::nonNull).toList();
+        if (!validationErrors.isEmpty()) {
+            return new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", validationErrors);
         }
         Account accountsInfo = accountService.getAccountsInfo(dto.id());
         if (accountsInfo != null) {
             AccountDto result = mapper.toAccountDto(accountsInfo);
-            return new BaseResponse(ResponceStatus.SUCCESS, null, result);
+            return new BaseResponse(ResponseStatus.SUCCESS, null, result);
         } else {
-            return new ValidationError(ResponceStatus.WARN,
+            return new ValidationError(ResponseStatus.WARN,
                     String.format("Нет счёта с идентификатором %s", dto.id()), null);
-        }
-    }
-
-
-    private void validationDto(String name, String broker, String number, List<FieldValidationError> responce) {
-        if (name.isEmpty()) {
-            responce.add(new FieldValidationError("name","Поле не может быть пустым"));
-        }
-        if (broker.isEmpty()) {
-            responce.add(new FieldValidationError("broker","Поле не может быть пустым"));
-        }
-        if (number.isEmpty()) {
-            responce.add(new FieldValidationError("number","Поле не может быть пустым"));
         }
     }
 }

@@ -3,6 +3,7 @@ package ru.gubber.portfoliohistory.account.service;
 import org.springframework.stereotype.Service;
 import ru.gubber.portfoliohistory.account.model.Account;
 import ru.gubber.portfoliohistory.account.repository.AccountRepository;
+import ru.gubber.portfoliohistory.common.utils.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,23 +22,34 @@ public class AccountServiceImpl implements AccountService {
         if (repository.existsByNameAndNumber(name, number)) {
             return null;
         }
-        Account newAccount = repository.save(new Account(UUID.randomUUID(), name, broker, number));
+        String newName = StringUtils.cut(name, 50);
+        String newBroker = StringUtils.cut(broker, 100);
+        String newNumber = StringUtils.cut(number, 50);
+        Account newAccount = repository.save(new Account(UUID.randomUUID(), newName, newBroker, newNumber));
         return newAccount.getId();
     }
 
     @Override
-    public UUID updateAccount(String id, String name, String broker, String number) {
+    public UpdatingResult updateAccount(String id, String name, String broker, String number) {
         UUID uuid = UUID.fromString(id);
-        if (!repository.existsById(uuid)) {
-            return null;
+        Optional<Account> optionalAccount = repository.findById(uuid);
+        if (optionalAccount.isEmpty()) {
+            return new UpdatingResult(uuid, UpdateStatus.ITEM_NOT_FOUND);
         }
-        UUID idByNameAndNumber = repository.findByNumber(number).getId();
-        if (idByNameAndNumber != uuid) {
-            return idByNameAndNumber;
+        Account account = optionalAccount.get();
+        Optional<Account> byBrokerAndNumber = repository.findByBrokerAndNumber(broker, number);
+        if ((byBrokerAndNumber.isPresent()) && (!byBrokerAndNumber.get().getId().equals(uuid))) {
+            return new UpdatingResult(uuid, UpdateStatus.UNSUCCESSFULLY);
         } else {
-            repository.save(new Account(uuid, name, broker, number));
-            return uuid;
-        }
+            String newName = StringUtils.cut(name, 50);
+            String newBroker = StringUtils.cut(broker, 100);
+            String newNumber = StringUtils.cut(number, 50);
+            account.setName(newName);
+            account.setBroker(newBroker);
+            account.setNumber(newNumber);
+            repository.save(account);
+            return new UpdatingResult(uuid, UpdateStatus.SUCCESSFULLY);
+            }
     }
 
     @Override

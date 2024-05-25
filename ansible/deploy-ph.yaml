@@ -1,0 +1,5 @@
+- name: Install application PORTFOLIO-HISTORY
+  hosts: firstvds
+  become: yes
+  roles:
+    - portfolio-history
