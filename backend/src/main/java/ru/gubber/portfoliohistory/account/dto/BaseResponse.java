@@ -1,26 +1,26 @@
 package ru.gubber.portfoliohistory.account.dto;
 
-public class BaseResponce {
-    private final ResponceStatus status;
+public class BaseResponse {
+    private final ResponseStatus status;
     private String errorMessage;
-    private Object responce;
+    private Object response;
 
-    public BaseResponce(ResponceStatus status, String errorMessage, Object responce) {
+    public BaseResponse(ResponseStatus status, String errorMessage, Object response) {
         this.status = status;
         this.errorMessage = errorMessage;
-        this.responce = responce;
+        this.response = response;
     }
 
     @Override
     public String toString() {
-        return "BaseResponce{" +
+        return "BaseResponse{" +
                 "status=" + status +
                 ", errorMessage='" + errorMessage + '\'' +
-                ", responce=" + responce +
+                ", response=" + response +
                 '}';
     }
 
-    public ResponceStatus getStatus() {
+    public ResponseStatus getStatus() {
         return status;
     }
 
@@ -32,11 +32,11 @@ public class BaseResponce {
         this.errorMessage = errorMessage;
     }
 
-    public Object getResponce() {
-        return responce;
+    public Object getResponse() {
+        return response;
     }
 
-    public void setResponce(Object responce) {
-        this.responce = responce;
+    public void setResponse(Object response) {
+        this.response = response;
     }
 }

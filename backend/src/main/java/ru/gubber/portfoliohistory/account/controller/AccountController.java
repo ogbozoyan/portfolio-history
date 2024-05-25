@@ -29,7 +29,7 @@ public class AccountController {
     }
 
     @PostMapping("/api/v1/create-account")
-    public BaseResponce createAccount(@RequestBody IncomeAccountDto dto) {
+    public BaseResponse createAccount(@RequestBody IncomeAccountDto dto) {
         log.info("Получен запрос на добавление счета {}.", dto.name());
         List<FieldValidationError> invalidField = new ArrayList<>();
         invalidField.add(ValidationUtils.validateStringField(dto.name()));
@@ -37,19 +37,19 @@ public class AccountController {
         invalidField.add(ValidationUtils.validateStringField(dto.number()));
         List<FieldValidationError> validationErrors = invalidField.stream().filter(Objects::nonNull).toList();
         if (!validationErrors.isEmpty()) {
-            return new ValidationError(ResponceStatus.ERROR, "Не правильный запрос", validationErrors);
+            return new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", validationErrors);
         }
         UUID uuid = accountService.createAccount(dto.name(), dto.broker(), dto.number());
         if (uuid != null) {
-            return new IdOutcomeAccountDto(new ResponceId(uuid));
+            return new IdOutcomeAccountDto(new ResponseId(uuid));
         } else {
-            return new ValidationError(ResponceStatus.WARN,
+            return new ValidationError(ResponseStatus.WARN,
                     String.format("В системе уже зарегистрирован счёт %s у брокера %s", dto.number(), dto.broker()), null);
         }
     }
 
     @PostMapping("/api/v1/update-account")
-    public BaseResponce updateAccount(@RequestBody IncomeFullAccountDto dto) {
+    public BaseResponse updateAccount(@RequestBody IncomeFullAccountDto dto) {
         log.info("Получен запрос на обновление счета {}.", dto.name());
         List<FieldValidationError> invalidField = new ArrayList<>();
         invalidField.add(ValidationUtils.validateStringField(dto.id()));
@@ -58,65 +58,65 @@ public class AccountController {
         invalidField.add(ValidationUtils.validateStringField(dto.number()));
         List<FieldValidationError> validationErrors = invalidField.stream().filter(Objects::nonNull).toList();
         if (!validationErrors.isEmpty()) {
-                return new ValidationError(ResponceStatus.ERROR, "Не правильный запрос", validationErrors);
+                return new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", validationErrors);
             }
         UpdatingResult updatingResult = accountService.updateAccount(dto.id(), dto.name(), dto.broker(), dto.number());
         switch (updatingResult.status()) {
             case UNSUCCESSFULLY -> {
-                return new ValidationError(ResponceStatus.WARN,
+                return new ValidationError(ResponseStatus.WARN,
                         String.format("В системе уже зарегистрирован счёт %s у брокера %s", dto.number(), dto.broker()), null);
             }
             case ITEM_NOT_FOUND -> {
-                return new ValidationError(ResponceStatus.WARN,
+                return new ValidationError(ResponseStatus.WARN,
                         String.format("Нет счёта с идентификатором %s", dto.id()), null);
             }
             default -> {
-                return   new IdOutcomeAccountDto(new ResponceId(updatingResult.uuid()));
+                return   new IdOutcomeAccountDto(new ResponseId(updatingResult.uuid()));
             }
 
         }
     }
 
     @PostMapping("/api/v1/delete-account")
-    public BaseResponce deleteAccount(@RequestBody IdIncomeAccountDto dto) {
+    public BaseResponse deleteAccount(@RequestBody IdIncomeAccountDto dto) {
         log.info("Получен запрос на удаление счета {}.", dto.id());
         List<FieldValidationError> invalidField = new ArrayList<>();
         invalidField.add(ValidationUtils.validateStringField(dto.id()));
         List<FieldValidationError> validationErrors = invalidField.stream().filter(Objects::nonNull).toList();
         if (!validationErrors.isEmpty()) {
-            return new ValidationError(ResponceStatus.ERROR, "Не правильный запрос", validationErrors);
+            return new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", validationErrors);
         }
         UUID uuid = accountService.deleteAccount(dto.id());
         if (uuid != null) {
-            return new IdOutcomeAccountDto(new ResponceId(uuid));
+            return new IdOutcomeAccountDto(new ResponseId(uuid));
         } else {
-            return new ValidationError(ResponceStatus.WARN,
+            return new ValidationError(ResponseStatus.WARN,
                     String.format("Нет счёта с идентификатором %s", dto.id()), null);
         }
     }
 
     @PostMapping("/api/v1/get-accounts-list")
-    public BaseResponce getAccountsList() {
+    public BaseResponse getAccountsList() {
         log.info("Получен запрос на предоставление списка всех счетов.");
         List<AccountDto> dtos = accountService.getAccountsList().stream().map(mapper::toAccountDto).collect(Collectors.toList());
         return new OutcomeAccountDto(dtos);
     }
 
     @PostMapping("/api/v1/get-accounts-info")
-    public BaseResponce getAccountsInfo(@RequestBody IdIncomeAccountDto dto) {
+    public BaseResponse getAccountsInfo(@RequestBody IdIncomeAccountDto dto) {
         log.info("Получен запрос на предоставление информации о счете с Id {}", dto.id());
         List<FieldValidationError> invalidField = new ArrayList<>();
         invalidField.add(ValidationUtils.validateStringField(dto.id()));
         List<FieldValidationError> validationErrors = invalidField.stream().filter(Objects::nonNull).toList();
         if (!validationErrors.isEmpty()) {
-            return new ValidationError(ResponceStatus.ERROR, "Не правильный запрос", validationErrors);
+            return new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", validationErrors);
         }
         Account accountsInfo = accountService.getAccountsInfo(dto.id());
         if (accountsInfo != null) {
             AccountDto result = mapper.toAccountDto(accountsInfo);
-            return new BaseResponce(ResponceStatus.SUCCESS, null, result);
+            return new BaseResponse(ResponseStatus.SUCCESS, null, result);
         } else {
-            return new ValidationError(ResponceStatus.WARN,
+            return new ValidationError(ResponseStatus.WARN,
                     String.format("Нет счёта с идентификатором %s", dto.id()), null);
         }
     }

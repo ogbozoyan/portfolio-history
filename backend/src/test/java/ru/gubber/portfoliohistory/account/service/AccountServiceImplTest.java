@@ -132,6 +132,18 @@ class AccountServiceImplTest {
     }
 
     @Test
+    @DisplayName("Успешное получение пустого списка счетов при отсутствии счетов.")
+    void getAccountsList_whenAccountsNotFound_thenReturnEmptyList() {
+        List<Account> accounts = new ArrayList<>();
+        Mockito.when(mockRepository.findAll()).thenReturn(accounts);
+
+        List<Account> accountsResult = accountService.getAccountsList();
+
+        Assertions.assertEquals(accounts.size(), accountsResult.size());
+        Assertions.assertEquals(0, accountsResult.size());
+    }
+
+    @Test
     @DisplayName("Успешное получение информации о счете.")
     void getAccountsInfo_whenAccountIsFound_thenReturnAccount() {
         Optional<Account> optionalAccount = Optional.of(validAccount1);
