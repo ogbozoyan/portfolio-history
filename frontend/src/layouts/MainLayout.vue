@@ -1,6 +1,6 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+  <q-layout view="hHh Lpr lFf">
+    <q-header >
       <q-toolbar>
         <q-btn
           flat
@@ -12,10 +12,9 @@
         />
 
         <q-toolbar-title>
-          Quasar App
+          Управление личными финансами
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
       </q-toolbar>
     </q-header>
 
@@ -24,49 +23,18 @@
       show-if-above
       bordered
     >
-      <q-list>
-        <q-item-label header>
-          Список Счетов
-        </q-item-label>
-
-        <EssentialLink
-          v-for="link in linksList"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
-
-      <q-btn flat :ripple="false" :push="true" label="Добавить счёт" @click="addAccountDialogOpe = true"/>
+        <AccountsSide />
     </q-drawer>
 
     <q-page-container>
       <router-view/>
     </q-page-container>
   </q-layout>
-  <q-dialog v-model="addAccountDialogOpe">
-    <q-card>
-      <q-card-section>
-        <div class="text-h6">Создать новый счёт</div>
-      </q-card-section>
-
-      <q-card-section class="q-pt-none">
-        <div class="q-gutter-md" style="width: 300px">
-          <q-input v-model="newAccountName" label="Название счёта" />
-          <q-input v-model="newAccountBrokerName" label="Брокер" />
-          <q-input v-model="newAccountBrokerNumber" label="Номер счёта" />
-        </div>
-      </q-card-section>
-
-      <q-card-actions align="right">
-        <q-btn flat label="Создать" color="primary" v-close-popup />
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
 </template>
 
 <script setup>
 import {ref} from 'vue'
-import EssentialLink from 'components/EssentialLink.vue'
+import AccountsSide from "components/AccountsSide.vue";
 
 defineOptions({
   name: 'MainLayout'
@@ -119,10 +87,6 @@ const linksList = [
 
 const leftDrawerOpen = ref(false)
 
-const addAccountDialogOpe = ref(false)
-const newAccountName = ref("")
-const newAccountBrokerName = ref("")
-const newAccountBrokerNumber = ref("")
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value
 }

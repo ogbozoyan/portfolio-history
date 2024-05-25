@@ -1,0 +1,24 @@
+upstream portfolio-upstream {
+    server localhost:8081;
+    keepalive 30;
+}
+
+server {
+        listen 80;
+
+        client_max_body_size 5m;
+
+        server_name portfolio.gubber.ru;
+
+        access_log /var/log/nginx/portfolio-gubber_access.log;
+        error_log  /var/log/nginx/portfolio-gubber_error.log;
+
+        location / {
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded_For $proxy_add_x_forwarded_for;
+            proxy_pass http://portfolio-upstream;
+            proxy_read_timeout 600;
+        }
+
+}
