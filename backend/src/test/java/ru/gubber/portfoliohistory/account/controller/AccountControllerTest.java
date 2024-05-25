@@ -28,11 +28,11 @@ class AccountControllerTest {
     private AccountController accountController;
     @Mock
     private AccountService mockAccountService;
-    private UUID uuid1 = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c46");
-    private UUID uuid2 = UUID.fromString("b1acc051-ea56-4ffc-a249-67010f8dd132");
-    private Account validAccount1 = new Account(uuid1, "БКС1", "БКС", "01");
-    private Account validAccount2 = new Account(uuid2, "БКС2", "БКС", "02");
-    private AccountMapper mapper = new AccountMapper();
+    private final UUID uuid1 = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c46");
+    private final UUID uuid2 = UUID.fromString("b1acc051-ea56-4ffc-a249-67010f8dd132");
+    private final Account validAccount1 = new Account(uuid1, "БКС1", "БКС", "01");
+    private final Account validAccount2 = new Account(uuid2, "БКС2", "БКС", "02");
+    private final AccountMapper mapper = new AccountMapper();
 
     @Test
     @DisplayName("Вызывается сервис")
@@ -54,8 +54,8 @@ class AccountControllerTest {
 
         Mockito.when(mockAccountService.createAccount("БКС3", "БКС", "03")).thenReturn(account3.getId());
 
-        IdOutcomeAccountDto responceResult = (IdOutcomeAccountDto) accountController.createAccount(new IncomeAccountDto("БКС3", "БКС", "03"));
-        ResponseId responseId = (ResponseId)responceResult.getResponse();
+        IdOutcomeAccountDto responseResult = (IdOutcomeAccountDto) accountController.createAccount(new IncomeAccountDto("БКС3", "БКС", "03"));
+        ResponseId responseId = (ResponseId)responseResult.getResponse();
         UUID resultUUID = responseId.id();
         Assertions.assertEquals(account3.getId(), resultUUID);
     }
@@ -73,31 +73,31 @@ class AccountControllerTest {
     @Test
     @DisplayName("При сохранении некорректных данных счета- name.isEmpty возвращается ошибка валидации")
     void createAccount_whenNameIsEmpty_thenReturnValidationError() {
-        List<FieldValidationError> responce = new ArrayList<>();
-        responce.add(new FieldValidationError("name","Поле не может быть пустым"));
-        ValidationError responceError = new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", responce);
+        List<FieldValidationError> response = new ArrayList<>();
+        response.add(new FieldValidationError("name","Поле не может быть пустым"));
+        ValidationError responseError = new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", response);
         ValidationError result = (ValidationError) accountController.createAccount(new IncomeAccountDto("", "БКС", "03"));
-        Assertions.assertEquals(responceError.getErrorMessage(), result.getErrorMessage());
+        Assertions.assertEquals(responseError.getErrorMessage(), result.getErrorMessage());
     }
 
     @Test
     @DisplayName("При сохранении некорректных данных счета - broker.isEmpty возвращается ошибка валидации")
     void createAccount_whenBrokerIsEmpty_thenReturnValidationError() {
-        List<FieldValidationError> responce = new ArrayList<>();
-        responce.add(new FieldValidationError("broker","Поле не может быть пустым"));
-        ValidationError responceError = new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", responce);
+        List<FieldValidationError> response = new ArrayList<>();
+        response.add(new FieldValidationError("broker","Поле не может быть пустым"));
+        ValidationError responseError = new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", response);
         ValidationError result = (ValidationError) accountController.createAccount(new IncomeAccountDto("БКС3", "", "03"));
-        Assertions.assertEquals(responceError.getErrorMessage(), result.getErrorMessage());
+        Assertions.assertEquals(responseError.getErrorMessage(), result.getErrorMessage());
     }
 
     @Test
     @DisplayName("При сохранении некорректных данных счета - number.isEmpty возвращается ошибка валидации")
     void createAccount_whenNumberIsEmpty_thenReturnValidationError() {
-        List<FieldValidationError> responce = new ArrayList<>();
-        responce.add(new FieldValidationError("number","Поле не может быть пустым"));
-        ValidationError responceError = new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", responce);
+        List<FieldValidationError> response = new ArrayList<>();
+        response.add(new FieldValidationError("number","Поле не может быть пустым"));
+        ValidationError responseError = new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", response);
         ValidationError result = (ValidationError) accountController.createAccount(new IncomeAccountDto("БКС3", "БКС", ""));
-        Assertions.assertEquals(responceError.getErrorMessage(), result.getErrorMessage());
+        Assertions.assertEquals(responseError.getErrorMessage(), result.getErrorMessage());
     }
 
     @Test
@@ -114,11 +114,11 @@ class AccountControllerTest {
     @Test
     @DisplayName("При обновлении некорректных данных счета - idDto.isEmpty- возвращается ошибка валидации")
     void updateAccount_whenIdDtoIsEmpty_thenReturnValidationError() {
-        List<FieldValidationError> responce = new ArrayList<>();
-        responce.add(new FieldValidationError("id","Поле не может быть пустым"));
-        ValidationError responceError = new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", responce);
+        List<FieldValidationError> response = new ArrayList<>();
+        response.add(new FieldValidationError("id","Поле не может быть пустым"));
+        ValidationError responseError = new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", response);
         ValidationError result = (ValidationError) accountController.updateAccount(new IncomeFullAccountDto("", "БКС3", "БКС", "03"));
-        Assertions.assertEquals(responceError.getErrorMessage(), result.getErrorMessage());
+        Assertions.assertEquals(responseError.getErrorMessage(), result.getErrorMessage());
     }
 
     @Test
@@ -129,9 +129,9 @@ class AccountControllerTest {
 
         Mockito.when(mockAccountService.updateAccount(anyString(), anyString(), anyString(), anyString())).thenReturn(updatingResult);
 
-        IdOutcomeAccountDto responceResult = (IdOutcomeAccountDto) accountController.updateAccount(new IncomeFullAccountDto(uuid3.toString(), "БКС3", "БКС", "03"));
-        ResponseId responce = (ResponseId) responceResult.getResponse();
-        UUID resultUUID = responce.id();
+        IdOutcomeAccountDto responseResult = (IdOutcomeAccountDto) accountController.updateAccount(new IncomeFullAccountDto(uuid3.toString(), "БКС3", "БКС", "03"));
+        ResponseId response = (ResponseId) responseResult.getResponse();
+        UUID resultUUID = response.id();
 
         Assertions.assertEquals(uuid3, resultUUID);
     }
@@ -176,11 +176,11 @@ class AccountControllerTest {
     @Test
     @DisplayName("При удалении счета со значением - idDto.isEmpty- возвращается ошибка валидации")
     void deleteAccount_whenIdDtoIsEmpty_thenReturnValidationError() {
-        List<FieldValidationError> responce = new ArrayList<>();
-        responce.add(new FieldValidationError("id","Поле не может быть пустым"));
-        ValidationError responceError = new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", responce);
+        List<FieldValidationError> response = new ArrayList<>();
+        response.add(new FieldValidationError("id","Поле не может быть пустым"));
+        ValidationError responseError = new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", response);
         ValidationError result = (ValidationError) accountController.deleteAccount(new IdIncomeAccountDto(""));
-        Assertions.assertEquals(responceError.getErrorMessage(), result.getErrorMessage());
+        Assertions.assertEquals(responseError.getErrorMessage(), result.getErrorMessage());
     }
 
     @Test
@@ -214,8 +214,8 @@ class AccountControllerTest {
         Mockito.when(mockAccountService.getAccountsList()).thenReturn(accounts);
         List<AccountDto> dtos = accounts.stream().map(mapper::toAccountDto).toList();
 
-        OutcomeAccountDto responce = (OutcomeAccountDto)accountController.getAccountsList();
-        List<AccountDto> resultDtos = (List<AccountDto>) responce.getResponse();
+        OutcomeAccountDto response = (OutcomeAccountDto)accountController.getAccountsList();
+        List<AccountDto> resultDtos = (List<AccountDto>) response.getResponse();
 
         Assertions.assertEquals(dtos.size(), resultDtos.size());
     }
@@ -226,14 +226,14 @@ class AccountControllerTest {
         Mockito.when(mockAccountService.getAccountsInfo(anyString())).thenReturn(validAccount1);
 
         BaseResponse accountsInfo = accountController.getAccountsInfo(new IdIncomeAccountDto(validAccount1.getId().toString()));
-        AccountDto responce = (AccountDto) accountsInfo.getResponse();
+        AccountDto response = (AccountDto) accountsInfo.getResponse();
 
         Assertions.assertAll(
                 () -> {
-                    Assertions.assertEquals(validAccount1.getId().toString(), responce.id());
-                    Assertions.assertEquals(validAccount1.getName(), responce.name());
-                    Assertions.assertEquals(validAccount1.getBroker(), responce.broker());
-                    Assertions.assertEquals(validAccount1.getNumber(), responce.number());
+                    Assertions.assertEquals(validAccount1.getId().toString(), response.id());
+                    Assertions.assertEquals(validAccount1.getName(), response.name());
+                    Assertions.assertEquals(validAccount1.getBroker(), response.broker());
+                    Assertions.assertEquals(validAccount1.getNumber(), response.number());
                 }
         );
     }
@@ -241,11 +241,11 @@ class AccountControllerTest {
     @Test
     @DisplayName("При получении информации о счете со значением - idDto.isEmpty- возвращается ошибка валидации")
     void getAccountsInfo_whenIdDtoIsEmpty_thenReturnValidationError() {
-        List<FieldValidationError> responce = new ArrayList<>();
-        responce.add(new FieldValidationError("id","Поле не может быть пустым"));
-        ValidationError responceError = new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", responce);
+        List<FieldValidationError> response = new ArrayList<>();
+        response.add(new FieldValidationError("id","Поле не может быть пустым"));
+        ValidationError responseError = new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", response);
         ValidationError result = (ValidationError) accountController.getAccountsInfo(new IdIncomeAccountDto(""));
-        Assertions.assertEquals(responceError.getErrorMessage(), result.getErrorMessage());
+        Assertions.assertEquals(responseError.getErrorMessage(), result.getErrorMessage());
     }
 
     @Test
