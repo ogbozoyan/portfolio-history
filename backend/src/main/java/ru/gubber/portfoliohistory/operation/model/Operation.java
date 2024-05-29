@@ -98,7 +98,7 @@ public class Operation {
                 ", accountId=" + accountId +
                 ", assetCode='" + assetCode + '\'' +
                 ", operationType=" + operationType +
-                ", count=" + amount +
+                ", amount=" + amount +
                 ", unitPrice=" + unitPrice +
                 '}';
     }
