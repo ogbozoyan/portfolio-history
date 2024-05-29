@@ -7,3 +7,7 @@ databaseChangeLog:
       file: db/changelog/includes/2024-05-29-PH-1-01.xml
   - include:
       file: db/changelog/includes/2024-05-29-PH-1-02.xml
+  - include:
+      file: db/changelog/includes/2024-05-29-PH-1-03.xml
+  - include:
+      file: db/changelog/includes/2024-05-29-PH-1-04.xml

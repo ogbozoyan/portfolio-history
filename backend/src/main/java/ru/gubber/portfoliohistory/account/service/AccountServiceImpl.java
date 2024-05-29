@@ -77,4 +77,5 @@ public class AccountServiceImpl implements AccountService {
     public boolean accountExists(UUID accountUuid) {
         return repository.existsById(accountUuid);
     }
+
 }

@@ -13,24 +13,27 @@ public class PurchasedAsset {
     private UUID id;
     private String code;
     private AssetType assetType;
-    private double count;
+    private double amount;
     private double purchasePrice;
     private double currentPrice;
+    private UUID accountId;
 
     public PurchasedAsset() {
     }
 
     public PurchasedAsset(UUID id, String code,
                           AssetType assetType,
-                          double count,
+                          double amount,
                           double purchasePrice,
-                          double currentPrice) {
+                          double currentPrice,
+                          UUID accountId) {
         this.id = id;
         this.code = code;
         this.assetType = assetType;
-        this.count = count;
+        this.amount = amount;
         this.purchasePrice = purchasePrice;
         this.currentPrice = currentPrice;
+        this.accountId = accountId;
     }
 
     public UUID getId() {
@@ -53,12 +56,12 @@ public class PurchasedAsset {
         this.assetType = assetType;
     }
 
-    public double getCount() {
-        return count;
+    public double getAmount() {
+        return amount;
     }
 
-    public void setCount(double count) {
-        this.count = count;
+    public void setAmount(double count) {
+        this.amount = count;
     }
 
     public double getPurchasePrice() {
@@ -77,15 +80,24 @@ public class PurchasedAsset {
         this.currentPrice = currentPrice;
     }
 
+    public UUID getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(UUID accountId) {
+        this.accountId = accountId;
+    }
+
     @Override
     public String toString() {
         return "Asset{" +
                 "id=" + id +
                 ", code='" + code + '\'' +
                 ", assetType=" + assetType +
-                ", count=" + count +
+                ", amount=" + amount +
                 ", purchasePrice=" + purchasePrice +
                 ", currentPrice=" + currentPrice +
+                ", accountId=" + accountId +
                 '}';
     }
 }
