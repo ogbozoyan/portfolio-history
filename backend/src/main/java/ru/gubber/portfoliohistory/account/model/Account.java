@@ -10,19 +10,21 @@ import java.util.UUID;
 @Table(name = "accounts")
 public class Account {
     @Id
-    UUID id;
-    String name;
-    String broker;
-    String number;
+    private UUID id;
+    private String name;
+    private String broker;
+    private String number;
+    private double currentBalance;
 
     public Account() {
     }
 
-    public Account(UUID id, String name, String broker, String number) {
+    public Account(UUID id, String name, String broker, String number, double currentBalance) {
         this.id = id;
         this.name = name;
         this.broker = broker;
         this.number = number;
+        this.currentBalance = currentBalance;
     }
 
     public UUID getId() {

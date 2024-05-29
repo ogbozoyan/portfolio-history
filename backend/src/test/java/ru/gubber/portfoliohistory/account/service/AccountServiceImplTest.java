@@ -29,7 +29,7 @@ class AccountServiceImplTest {
     @Mock
     AccountRepository mockRepository;
     private final UUID uuid1 = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c46");
-    private final Account validAccount1 = new Account(uuid1, "БКС1", "БКС", "01");
+    private final Account validAccount1 = new Account(uuid1, "БКС1", "БКС", "01", 0.0);
 
     @Test
     @DisplayName("При создании счета с именем и номером, которые уже существуют у другого счета в базе, получение null.")
@@ -70,7 +70,7 @@ class AccountServiceImplTest {
         Optional<Account> optionalAccount = Optional.of(validAccount1);
         UpdatingResult updatingResult = new UpdatingResult(UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c46"), UpdateStatus.UNSUCCESSFULLY);
         UUID uuid2 = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c50");
-        Account validAccountTemp = new Account(uuid2, "БКС1", "БКС", "01");
+        Account validAccountTemp = new Account(uuid2, "БКС1", "БКС", "01", 0.0);
 
 
         Mockito.when(mockRepository.findById(any())).thenReturn(optionalAccount);
@@ -121,7 +121,7 @@ class AccountServiceImplTest {
     void getAccountsList_thenReturnList() {
         List<Account> accounts = new ArrayList<>();
         UUID uuid2 = UUID.fromString("b1acc051-ea56-4ffc-a249-67010f8dd132");
-        Account validAccount2 = new Account(uuid2, "БКС2", "БКС", "02");
+        Account validAccount2 = new Account(uuid2, "БКС2", "БКС", "02", 0.0);
         accounts.add(validAccount1);
         accounts.add(validAccount2);
         Mockito.when(mockRepository.findAll()).thenReturn(accounts);

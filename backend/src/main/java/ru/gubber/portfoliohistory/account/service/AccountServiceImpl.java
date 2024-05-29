@@ -25,7 +25,7 @@ public class AccountServiceImpl implements AccountService {
         String newName = StringUtils.cut(name, 50);
         String newBroker = StringUtils.cut(broker, 100);
         String newNumber = StringUtils.cut(number, 50);
-        Account newAccount = repository.save(new Account(UUID.randomUUID(), newName, newBroker, newNumber));
+        Account newAccount = repository.save(new Account(UUID.randomUUID(), newName, newBroker, newNumber, 0.0));
         return newAccount.getId();
     }
 

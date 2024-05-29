@@ -261,14 +261,14 @@ Content-Type: appliction/json
                 name: <Название>,
                 broker: <Название брокера>,
                 number: <номер у брокера>,
-                amount: <Текущий баланс>
+                currentBalance: <Текущий баланс>
             },
             {
                 id: <идентификатор счёта>,
                 name: <Название>,
                 broker: <Название брокера>,
                 number: <номер у брокера>,
-                amount: <Текущий баланс>
+                currentBalance: <Текущий баланс>
             },
             ...
         ]
@@ -302,7 +302,7 @@ Content-Type: appliction/json
         name: <Название>,
         broker: <Название брокера>,
         number: <номер у брокера>,
-        amount: <Текущий баланс>
+        currentBalance: <Текущий баланс>
     }
 }
 ----
