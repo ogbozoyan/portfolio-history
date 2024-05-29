@@ -9,4 +9,12 @@ public class ValidationUtils {
             return null;
         }
     }
+
+    public static FieldValidationError validateNumberField(Number s) {
+        if (s==null) {
+            return new FieldValidationError("\"" + s + "\"", "Поле не может быть пустым.");
+        } else {
+            return null;
+        }
+    }
 }

@@ -91,7 +91,7 @@ Api разрабатывается на принципах RPC. Т.е. REST ме
 POST /api/v1/replenish-account
 
 {
-    acciuntId: uuid
+    accountId: uuid
     amount: <сумма>,
 }
 ----
