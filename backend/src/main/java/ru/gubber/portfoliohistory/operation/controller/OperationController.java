@@ -32,16 +32,17 @@ public class OperationController {
         List<FieldValidationError> invalidField = new ArrayList<>();
         invalidField.add(ValidationUtils.validateStringField(dto.accountId()));
         invalidField.add(ValidationUtils.validateNumberField(dto.amount()));
+        invalidField.add(ValidationUtils.validateNumberField(dto.unitPrice()));
         List<FieldValidationError> validationErrors = invalidField.stream().filter(Objects::nonNull).toList();
         if (!validationErrors.isEmpty()) {
             return new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", validationErrors);
         }
-        UUID uuid = operationService.replenishAccount(dto.accountId(), dto.amount());
+        UUID uuid = operationService.replenishAccount(dto.accountId(), dto.amount(), dto.unitPrice());
         if (uuid != null) {
             return new IdOutcomeAccountDto(new ResponseId(uuid));
         } else {
             return new ValidationError(ResponseStatus.WARN,
-                    String.format("В системе" ), null);
+                    String.format("На счет %s не удалось добавить актив", dto.accountId()), null);
         }
     }
 }

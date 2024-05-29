@@ -15,4 +15,6 @@ public interface AccountService {
     List<Account> getAccountsList();
 
     Account getAccountsInfo(String id);
+
+    boolean accountExists(UUID accountUuid);
 }

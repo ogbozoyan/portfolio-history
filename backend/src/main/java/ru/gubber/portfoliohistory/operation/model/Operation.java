@@ -16,7 +16,7 @@ public class Operation {
     private UUID accountId;
     private String assetCode;
     private OperationType operationType;
-    private double count;
+    private double amount;
     private double unitPrice;
 
     public Operation() {
@@ -27,14 +27,14 @@ public class Operation {
                      UUID accountId,
                      String assetCode,
                      OperationType operationType,
-                     double count,
+                     double amount,
                      double unitPrice) {
         this.id = id;
         this.creatTime = creatTime;
         this.accountId = accountId;
         this.assetCode = assetCode;
         this.operationType = operationType;
-        this.count = count;
+        this.amount = amount;
         this.unitPrice = unitPrice;
     }
 
@@ -74,12 +74,12 @@ public class Operation {
         this.operationType = operationType;
     }
 
-    public double getCount() {
-        return count;
+    public double getAmount() {
+        return amount;
     }
 
-    public void setCount(double count) {
-        this.count = count;
+    public void setAmount(double amount) {
+        this.amount = amount;
     }
 
     public double getUnitPrice() {
@@ -98,7 +98,7 @@ public class Operation {
                 ", accountId=" + accountId +
                 ", assetCode='" + assetCode + '\'' +
                 ", operationType=" + operationType +
-                ", count=" + count +
+                ", count=" + amount +
                 ", unitPrice=" + unitPrice +
                 '}';
     }

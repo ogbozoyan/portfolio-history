@@ -72,4 +72,9 @@ public class AccountServiceImpl implements AccountService {
         Optional<Account> optionalAccount = repository.findById(UUID.fromString(id));
         return optionalAccount.orElse(null);
     }
+
+    @Override
+    public boolean accountExists(UUID accountUuid) {
+        return repository.existsById(accountUuid);
+    }
 }

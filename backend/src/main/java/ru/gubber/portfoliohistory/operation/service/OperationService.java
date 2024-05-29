@@ -6,5 +6,5 @@ import java.util.UUID;
 
 public interface OperationService {
 
-    UUID replenishAccount(String accountId, Double amount);
+    UUID replenishAccount(String accountId, Double amount, Double unitPrice);
 }
