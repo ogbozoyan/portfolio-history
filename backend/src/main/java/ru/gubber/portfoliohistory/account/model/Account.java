@@ -43,6 +43,10 @@ public class Account {
         return number;
     }
 
+    public double getCurrentBalance() {
+        return currentBalance;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -55,6 +59,10 @@ public class Account {
         this.number = number;
     }
 
+    public void setCurrentBalance(double currentBalance) {
+        this.currentBalance = currentBalance;
+    }
+
     @Override
     public String toString() {
         return "Account{" +
@@ -62,6 +70,7 @@ public class Account {
                 ", name='" + name + '\'' +
                 ", broker='" + broker + '\'' +
                 ", number='" + number + '\'' +
+                ", currentBalance='" + currentBalance + '\'' +
                 '}';
     }
 }

@@ -7,6 +7,7 @@ public class AccountMapper {
         return new AccountDto(account.getId().toString(),
                 account.getName(),
                 account.getBroker(),
-                account.getNumber());
+                account.getNumber(),
+                account.getCurrentBalance());
     }
 }
