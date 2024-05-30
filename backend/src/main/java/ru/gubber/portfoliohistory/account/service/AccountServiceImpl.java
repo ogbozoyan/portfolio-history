@@ -63,7 +63,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public List<Account> getAccountsList() {
+    public List<Account>  getAccountsList() {
         return repository.findAll();
     }
 
@@ -76,6 +76,14 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public boolean accountExists(UUID accountUuid) {
         return repository.existsById(accountUuid);
+    }
+
+    @Override
+    public double setCurrentBalance(UUID accountUuid, double amount) {
+        Account account = repository.findById(accountUuid).get();
+        account.setCurrentBalance(account.getCurrentBalance() + amount);
+        repository.save(account);
+        return account.getCurrentBalance();
     }
 
 }

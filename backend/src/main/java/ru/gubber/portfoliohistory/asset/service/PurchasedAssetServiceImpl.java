@@ -20,7 +20,7 @@ public class PurchasedAssetServiceImpl implements PurchasedAssetService {
     public void purchaseAsset(UUID accountId, String code, Double amount) {
         Optional<PurchasedAsset> optionalPurchasedAsset = repository.findByAccountIdAndCode(accountId, code);
         if (optionalPurchasedAsset.isEmpty()) {
-            repository.save(new PurchasedAsset(null, code, AssetType.CURRENCY, amount, 1.0, 1.0, accountId));
+            repository.save(new PurchasedAsset(UUID.randomUUID(), code, AssetType.CURRENCY, amount, 1.0, 1.0, accountId));
         } else {
             PurchasedAsset asset = optionalPurchasedAsset.get();
             asset.setAmount(asset.getAmount() + amount);

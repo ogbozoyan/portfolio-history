@@ -10,6 +10,8 @@ import ru.gubber.portfoliohistory.account.dto.*;
 import ru.gubber.portfoliohistory.common.utils.FieldValidationError;
 import ru.gubber.portfoliohistory.common.utils.ValidationUtils;
 import ru.gubber.portfoliohistory.operation.dto.OperationDto;
+import ru.gubber.portfoliohistory.operation.dto.OutcomeOperationDto;
+import ru.gubber.portfoliohistory.operation.dto.ResultOperationId;
 import ru.gubber.portfoliohistory.operation.service.OperationService;
 
 import java.util.ArrayList;
@@ -39,7 +41,7 @@ public class OperationController {
         }
         UUID uuid = operationService.replenishAccount(dto.accountId(), dto.amount(), dto.unitPrice());
         if (uuid != null) {
-            return new IdOutcomeAccountDto(new ResponseId(uuid));
+            return new OutcomeOperationDto(new ResultOperationId(uuid));
         } else {
             return new ValidationError(ResponseStatus.WARN,
                     String.format("На счет %s не удалось добавить актив", dto.accountId()), null);

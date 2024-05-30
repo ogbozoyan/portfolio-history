@@ -1,5 +1,6 @@
 package ru.gubber.portfoliohistory.asset.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -12,10 +13,14 @@ public class PurchasedAsset {
     @Id
     private UUID id;
     private String code;
+    @Column(name = "asset_type")
     private AssetType assetType;
     private double amount;
+    @Column(name = "purchase_price")
     private double purchasePrice;
+    @Column(name = "current_price")
     private double currentPrice;
+    @Column(name = "account_id")
     private UUID accountId;
 
     public PurchasedAsset() {

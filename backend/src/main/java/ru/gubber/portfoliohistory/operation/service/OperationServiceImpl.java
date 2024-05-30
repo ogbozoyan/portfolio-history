@@ -27,9 +27,10 @@ public class OperationServiceImpl implements OperationService {
     public UUID replenishAccount(String accountId, Double amount, Double unitPrice) {
         UUID accountUuid = UUID.fromString(accountId);
         if (accountService.accountExists(accountUuid)) {
-            Operation operation = repository.save(new Operation(null, LocalDateTime.now(), accountUuid, assetCode, OperationType.REPLENISHMENT, amount, unitPrice));
+            Operation operation = repository.save(new Operation(UUID.randomUUID(), LocalDateTime.now(), accountUuid, assetCode, OperationType.REPLENISHMENT, amount, unitPrice));
             purchasedAssetService.purchaseAsset(accountUuid, assetCode, amount);
-
+            accountService.setCurrentBalance(accountUuid, amount);
+            return operation.getId();
         }
         return null;
     }

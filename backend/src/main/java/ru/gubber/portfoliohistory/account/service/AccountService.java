@@ -17,4 +17,6 @@ public interface AccountService {
     Account getAccountsInfo(String id);
 
     boolean accountExists(UUID accountUuid);
+
+    double setCurrentBalance(UUID accountUuid, double amount);
 }

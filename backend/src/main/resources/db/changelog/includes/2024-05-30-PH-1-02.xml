@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+    <changeSet id="2024-05-30-PH-1-02" author="Anna Vashchenkova">
+        <renameColumn tableName="purchased_assets" oldColumnName="assetType" newColumnName="asset_type"/>
+        <renameColumn tableName="purchased_assets" oldColumnName="purchasePrice" newColumnName="purchase_price"/>
+        <renameColumn tableName="purchased_assets" oldColumnName="currentPrice" newColumnName="current_price"/>
+    </changeSet>
+
+
+</databaseChangeLog>

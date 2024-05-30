@@ -1,5 +1,6 @@
 package ru.gubber.portfoliohistory.account.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -14,6 +15,7 @@ public class Account {
     private String name;
     private String broker;
     private String number;
+    @Column(name = "current_balance")
     private double currentBalance;
 
     public Account() {
