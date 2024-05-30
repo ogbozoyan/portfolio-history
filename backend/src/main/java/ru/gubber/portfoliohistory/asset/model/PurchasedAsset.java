@@ -1,9 +1,6 @@
 package ru.gubber.portfoliohistory.asset.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.util.UUID;
 
@@ -13,6 +10,7 @@ public class PurchasedAsset {
     @Id
     private UUID id;
     private String code;
+    @Enumerated(EnumType.STRING)
     @Column(name = "asset_type")
     private AssetType assetType;
     private double amount;

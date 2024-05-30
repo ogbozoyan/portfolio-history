@@ -1,9 +1,6 @@
 package ru.gubber.portfoliohistory.operation.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -19,6 +16,7 @@ public class Operation {
     private UUID accountId;
     @Column(name = "asset_code")
     private String assetCode;
+    @Enumerated(EnumType.STRING)
     @Column(name = "operation_type")
     private OperationType operationType;
     private double amount;
