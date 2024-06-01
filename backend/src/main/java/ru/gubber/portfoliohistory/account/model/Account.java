@@ -1,5 +1,6 @@
 package ru.gubber.portfoliohistory.account.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -10,19 +11,22 @@ import java.util.UUID;
 @Table(name = "accounts")
 public class Account {
     @Id
-    UUID id;
-    String name;
-    String broker;
-    String number;
+    private UUID id;
+    private String name;
+    private String broker;
+    private String number;
+    @Column(name = "current_balance")
+    private double currentBalance;
 
     public Account() {
     }
 
-    public Account(UUID id, String name, String broker, String number) {
+    public Account(UUID id, String name, String broker, String number, double currentBalance) {
         this.id = id;
         this.name = name;
         this.broker = broker;
         this.number = number;
+        this.currentBalance = currentBalance;
     }
 
     public UUID getId() {
@@ -41,6 +45,10 @@ public class Account {
         return number;
     }
 
+    public double getCurrentBalance() {
+        return currentBalance;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -53,6 +61,10 @@ public class Account {
         this.number = number;
     }
 
+    public void setCurrentBalance(double currentBalance) {
+        this.currentBalance = currentBalance;
+    }
+
     @Override
     public String toString() {
         return "Account{" +
@@ -60,6 +72,7 @@ public class Account {
                 ", name='" + name + '\'' +
                 ", broker='" + broker + '\'' +
                 ", number='" + number + '\'' +
+                ", currentBalance='" + currentBalance + '\'' +
                 '}';
     }
 }

@@ -4,9 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.gubber.portfoliohistory.account.model.Account;
 import ru.gubber.portfoliohistory.account.repository.AccountRepository;
@@ -28,8 +26,11 @@ class AccountServiceImplTest {
     AccountServiceImpl accountService;
     @Mock
     AccountRepository mockRepository;
+    @Captor
+    private ArgumentCaptor<Account> accountArgumentCaptor;
     private final UUID uuid1 = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c46");
-    private final Account validAccount1 = new Account(uuid1, "БКС1", "БКС", "01");
+    private final double currentBalance = 0.0;
+    private final Account validAccount1 = new Account(uuid1, "БКС1", "БКС", "01", currentBalance);
 
     @Test
     @DisplayName("При создании счета с именем и номером, которые уже существуют у другого счета в базе, получение null.")
@@ -70,7 +71,7 @@ class AccountServiceImplTest {
         Optional<Account> optionalAccount = Optional.of(validAccount1);
         UpdatingResult updatingResult = new UpdatingResult(UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c46"), UpdateStatus.UNSUCCESSFULLY);
         UUID uuid2 = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c50");
-        Account validAccountTemp = new Account(uuid2, "БКС1", "БКС", "01");
+        Account validAccountTemp = new Account(uuid2, "БКС1", "БКС", "01", currentBalance);
 
 
         Mockito.when(mockRepository.findById(any())).thenReturn(optionalAccount);
@@ -121,7 +122,7 @@ class AccountServiceImplTest {
     void getAccountsList_thenReturnList() {
         List<Account> accounts = new ArrayList<>();
         UUID uuid2 = UUID.fromString("b1acc051-ea56-4ffc-a249-67010f8dd132");
-        Account validAccount2 = new Account(uuid2, "БКС2", "БКС", "02");
+        Account validAccount2 = new Account(uuid2, "БКС2", "БКС", "02", currentBalance);
         accounts.add(validAccount1);
         accounts.add(validAccount2);
         Mockito.when(mockRepository.findAll()).thenReturn(accounts);
@@ -159,5 +160,35 @@ class AccountServiceImplTest {
                     assertEquals(validAccount1.getNumber(), accountsInfo.getNumber());
                 }
         );
+    }
+
+    @Test
+    @DisplayName("При нахождении счета в базе данных вернуть true")
+    public void accountExists_whenAccountExists_thenReturnTrue() {
+        Mockito.when(mockRepository.existsById(any())).thenReturn(true);
+
+        boolean result = accountService.accountExists(uuid1);
+        Assertions.assertTrue(result);
+    }
+
+    @Test
+    @DisplayName("При отсутствии счета в базе данных вернуть false")
+    public void accountExists_whenAccountNotExists_thenReturnFalse() {
+        Mockito.when(mockRepository.existsById(any())).thenReturn(false);
+
+        boolean result = accountService.accountExists(uuid1);
+        Assertions.assertFalse(result);
+    }
+
+    @Test
+    @DisplayName("Счет сохраняется с текущим балансом 105")
+    public void setCurrentBalance() {
+        UUID uuid2 = UUID.fromString("b1acc051-ea56-4ffc-a249-67010f8dd132");
+        Account validAccount2 = new Account(uuid2, "БКС2", "БКС", "02", 844.);
+        Optional<Account> optionalAccount = Optional.of(validAccount2);
+        Mockito.when(mockRepository.findById(any())).thenReturn(optionalAccount);
+        double result = accountService.setCurrentBalance(uuid2, 105);
+        verify(mockRepository).save(accountArgumentCaptor.capture());
+        Assertions.assertEquals(accountArgumentCaptor.getValue().getCurrentBalance(), result);
     }
 }

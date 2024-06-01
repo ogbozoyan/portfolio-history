@@ -30,15 +30,15 @@ class AccountControllerTest {
     private AccountService mockAccountService;
     private final UUID uuid1 = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c46");
     private final UUID uuid2 = UUID.fromString("b1acc051-ea56-4ffc-a249-67010f8dd132");
-    private final Account validAccount1 = new Account(uuid1, "БКС1", "БКС", "01");
-    private final Account validAccount2 = new Account(uuid2, "БКС2", "БКС", "02");
+    private final Account validAccount1 = new Account(uuid1, "БКС1", "БКС", "01", 0.0);
+    private final Account validAccount2 = new Account(uuid2, "БКС2", "БКС", "02", 0.0);
     private final AccountMapper mapper = new AccountMapper();
 
     @Test
     @DisplayName("Вызывается сервис")
     void createAccount_thenUseService() {
         UUID uuid3 = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c47");
-        Account account3 = new Account(uuid3, "БКС3", "БКС", "03");
+        Account account3 = new Account(uuid3, "БКС3", "БКС", "03", 0.0);
 
         Mockito.when(mockAccountService.createAccount("БКС3", "БКС", "03")).thenReturn(account3.getId());
 
@@ -50,7 +50,7 @@ class AccountControllerTest {
     @DisplayName("Возвращается ответ с корректным UUID")
     void createAccount_thenReturnUUID() {
         UUID uuid3 = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c47");
-        Account account3 = new Account(uuid3, "БКС3", "БКС", "03");
+        Account account3 = new Account(uuid3, "БКС3", "БКС", "03", 0.0);
 
         Mockito.when(mockAccountService.createAccount("БКС3", "БКС", "03")).thenReturn(account3.getId());
 

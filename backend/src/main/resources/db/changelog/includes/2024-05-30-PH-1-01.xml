@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+    <changeSet id="2024-05-30-PH-1-01" author="Anna Vashchenkova">
+        <renameColumn tableName="operations" oldColumnName="creatTime" newColumnName="creat_time"/>
+        <renameColumn tableName="operations" oldColumnName="accountId" newColumnName="account_id"/>
+        <renameColumn tableName="operations" oldColumnName="assetCode" newColumnName="asset_code"/>
+        <renameColumn tableName="operations" oldColumnName="operationType" newColumnName="operation_type"/>
+        <renameColumn tableName="operations" oldColumnName="unitPrice" newColumnName="unit_price"/>
+    </changeSet>
+
+
+</databaseChangeLog>

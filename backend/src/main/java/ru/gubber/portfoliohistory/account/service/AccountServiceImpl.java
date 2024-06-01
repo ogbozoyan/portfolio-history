@@ -25,7 +25,7 @@ public class AccountServiceImpl implements AccountService {
         String newName = StringUtils.cut(name, 50);
         String newBroker = StringUtils.cut(broker, 100);
         String newNumber = StringUtils.cut(number, 50);
-        Account newAccount = repository.save(new Account(UUID.randomUUID(), newName, newBroker, newNumber));
+        Account newAccount = repository.save(new Account(UUID.randomUUID(), newName, newBroker, newNumber, 0.0));
         return newAccount.getId();
     }
 
@@ -63,7 +63,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public List<Account> getAccountsList() {
+    public List<Account>  getAccountsList() {
         return repository.findAll();
     }
 
@@ -72,4 +72,18 @@ public class AccountServiceImpl implements AccountService {
         Optional<Account> optionalAccount = repository.findById(UUID.fromString(id));
         return optionalAccount.orElse(null);
     }
+
+    @Override
+    public boolean accountExists(UUID accountUuid) {
+        return repository.existsById(accountUuid);
+    }
+
+    @Override
+    public double setCurrentBalance(UUID accountUuid, double amount) {
+        Account account = repository.findById(accountUuid).get();
+        account.setCurrentBalance(account.getCurrentBalance() + amount);
+        repository.save(account);
+        return account.getCurrentBalance();
+    }
+
 }

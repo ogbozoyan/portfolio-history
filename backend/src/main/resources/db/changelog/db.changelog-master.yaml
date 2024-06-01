@@ -1,3 +1,19 @@
 databaseChangeLog:
   - include:
       file: db/changelog/includes/2024-05-16-PH-10-01.xml
+  - include:
+      file: db/changelog/includes/2024-05-28-PH-1-01.xml
+  - include:
+      file: db/changelog/includes/2024-05-29-PH-1-01.xml
+  - include:
+      file: db/changelog/includes/2024-05-29-PH-1-02.xml
+  - include:
+      file: db/changelog/includes/2024-05-29-PH-1-03.xml
+  - include:
+      file: db/changelog/includes/2024-05-29-PH-1-04.xml
+  - include:
+      file: db/changelog/includes/2024-05-29-PH-1-05.xml
+  - include:
+      file: db/changelog/includes/2024-05-30-PH-1-01.xml
+  - include:
+      file: db/changelog/includes/2024-05-30-PH-1-02.xml
