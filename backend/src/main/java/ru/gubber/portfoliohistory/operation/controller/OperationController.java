@@ -36,12 +36,15 @@ public class OperationController {
         invalidField.add(ValidationUtils.validateNumberField(dto.amount(), "amount"));
         List<FieldValidationError> validationErrors = invalidField.stream().filter(Objects::nonNull).toList();
         if (!validationErrors.isEmpty()) {
+            log.info("Ошибка валидации - не правильный запрос.");
             return new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", validationErrors);
         }
         UUID uuid = operationService.replenishAccount(dto.accountId(), dto.amount());
         if (uuid != null) {
+            log.info("Запрос успешно выполнен.");
             return new OutcomeOperationDto(new ResultOperationId(uuid));
         } else {
+            log.info("Не удалось выполнить запрос на добавление актива на счет {}", dto.accountId());
             return new ValidationError(ResponseStatus.WARN,
                     String.format("На счет %s не удалось добавить актив", dto.accountId()), null);
         }
