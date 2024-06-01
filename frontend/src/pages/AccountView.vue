@@ -5,6 +5,13 @@
         {{ store.currentAccount.name }}
       </div>
       <div class="col-auto q-pr-xs">
+        <replenish-account-component :account-id="accountId"/>
+        <q-btn round
+               size="sm"
+               icon="fas fa-hand-holding-usd"
+               title="Снять"
+               disable
+        />
         <q-btn round
                size="sm"
                icon="edit"
@@ -27,6 +34,9 @@
     </div>
     <div>
       {{ store.currentAccount.number }}
+    </div>
+    <div>
+      {{ store.currentAccount.currentBalance }}
     </div>
   </div>
   <q-dialog v-model="accountDialogShown">
@@ -55,8 +65,8 @@ import {useRoute, useRouter} from 'vue-router'
 import {accountsStore} from "stores/accounts.js";
 import {onBeforeUpdate, onMounted, ref, watch} from "vue";
 import {storeToRefs} from "pinia";
+import ReplenishAccountComponent from "components/ReplenishAccountComponent.vue";
 
-const route = useRoute()
 const router = useRouter()
 const store = accountsStore()
 const accountDialogShown = ref(false)
