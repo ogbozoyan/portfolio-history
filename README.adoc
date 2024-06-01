@@ -8,6 +8,15 @@
 * Учёт операций с инструментами в портфеле
 * Оценивать эффектичность портфеля
 
+== Используемые технологии JAVA
+* Java 21
+* SpringBoot 3
+* Hibernate
+* Liquibase
+* Maven
+* JUnit
+* Mockito
+
 == Договорённости
 
 * <<./documentation/agreements.adoc#development-agreements,Договорённости разработки>>
