@@ -1,7 +1,7 @@
-package ru.gubber.portfoliohistory.asset.repository;
+package ru.gubber.portfoliohistory.purchasedasset.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import ru.gubber.portfoliohistory.asset.model.PurchasedAsset;
+import ru.gubber.portfoliohistory.purchasedasset.model.PurchasedAsset;
 
 import java.util.Optional;
 import java.util.UUID;

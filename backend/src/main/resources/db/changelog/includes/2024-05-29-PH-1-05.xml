@@ -14,5 +14,10 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="2024-06-01-PH-1-01" author="Anna Vashchenkova">
+        <update tableName="accounts">
+            <column name="current_balance" value="0"/>
+        </update>
+    </changeSet>
 
 </databaseChangeLog>

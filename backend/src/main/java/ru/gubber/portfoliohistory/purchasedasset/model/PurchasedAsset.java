@@ -1,4 +1,4 @@
-package ru.gubber.portfoliohistory.asset.model;
+package ru.gubber.portfoliohistory.purchasedasset.model;
 
 import jakarta.persistence.*;
 

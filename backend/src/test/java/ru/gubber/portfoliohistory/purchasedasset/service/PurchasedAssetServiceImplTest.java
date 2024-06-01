@@ -1,4 +1,4 @@
-package ru.gubber.portfoliohistory.asset.service;
+package ru.gubber.portfoliohistory.purchasedasset.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.gubber.portfoliohistory.asset.model.AssetType;
-import ru.gubber.portfoliohistory.asset.model.PurchasedAsset;
-import ru.gubber.portfoliohistory.asset.repository.PurchasedAssetRepository;
+import ru.gubber.portfoliohistory.purchasedasset.model.AssetType;
+import ru.gubber.portfoliohistory.purchasedasset.model.PurchasedAsset;
+import ru.gubber.portfoliohistory.purchasedasset.repository.PurchasedAssetRepository;
 
 import java.util.Optional;
 import java.util.UUID;

@@ -1,4 +1,4 @@
-package ru.gubber.portfoliohistory.asset.service;
+package ru.gubber.portfoliohistory.purchasedasset.service;
 
 import java.util.UUID;
 

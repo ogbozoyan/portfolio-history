@@ -7,7 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.gubber.portfoliohistory.account.service.AccountService;
-import ru.gubber.portfoliohistory.asset.service.PurchasedAssetService;
+import ru.gubber.portfoliohistory.purchasedasset.service.PurchasedAssetService;
 import ru.gubber.portfoliohistory.operation.model.Operation;
 import ru.gubber.portfoliohistory.operation.repository.OperationRepository;
 
@@ -29,6 +29,7 @@ class OperationServiceImplTest {
     UUID accoundUUID = UUID.fromString("f99b9e41-4753-43ad-89cd-1874c3a35c40");
     @Captor
     ArgumentCaptor<Operation> operationArgumentCaptor;
+    private static final String ASSET_CODE = "RUR";
 
     @Test
     @DisplayName("При существующем id счета возвращается uuid операции")
@@ -38,9 +39,10 @@ class OperationServiceImplTest {
         Mockito.when(mockRepository.save(any())).thenAnswer(invocationOnMock ->
                 invocationOnMock.getArgument(0));
 
-        UUID resultUuid = operationService.replenishAccount(accoundUUID.toString(), amount, 1.0);
+        UUID resultUuid = operationService.replenishAccount(accoundUUID.toString(), amount);
         verify(mockAccountService).setCurrentBalance(accoundUUID, amount);
         verify(mockRepository).save(operationArgumentCaptor.capture());
+        verify(mockPurchasedAssetService).purchaseAsset(accoundUUID, ASSET_CODE, amount);
         Assertions.assertEquals(operationArgumentCaptor.getValue().getId(), resultUuid);
     }
 
@@ -50,7 +52,7 @@ class OperationServiceImplTest {
         double amount = 105.3;
         Mockito.when(mockAccountService.accountExists(any())).thenReturn(false);
 
-        UUID resultUuid = operationService.replenishAccount(accoundUUID.toString(), amount, 1.0);
+        UUID resultUuid = operationService.replenishAccount(accoundUUID.toString(), amount);
         Assertions.assertNull(resultUuid);
     }
 }
