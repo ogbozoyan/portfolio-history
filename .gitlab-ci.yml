@@ -86,7 +86,6 @@ deploy:
   script:
     - cd ansible
     - cp $INVENTORY inventory.yaml
-    - cat inventory.yaml
     - export ANSIBLE_CONFIG=ansible.cfg
     - ansible --version
     - ansible-inventory --graph

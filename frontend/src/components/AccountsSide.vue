@@ -1,10 +1,15 @@
 <template>
   <q-list>
-    <q-item-label header class="text-h5">
-      Список Счетов
-    </q-item-label>
-    <q-item v-for="account in store.accounts" v-bind="account" :key="account.id">
-      <router-link :to="'/account/' + account.id" >{{account.name}}</router-link>
+    <q-item v-for="account in store.accounts" v-bind="account" :key="account.id" @click="showAccount(account.id)">
+        <q-card class="my-card"  @click="showAccount(account.id)">
+          <q-card-section>
+            <div class="text-h6">{{account.name}}</div>
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            {{ account.currentBalance }}
+          </q-card-section>
+        </q-card>
     </q-item>
     <br />
 
@@ -41,14 +46,17 @@
 </template>
 
 <script setup>
-import {onMounted, ref} from "vue";
+import {inject, onMounted, ref} from "vue";
 import {accountsStore} from "stores/accounts.js";
+import {useRouter} from "vue-router";
 
+const store = accountsStore()
+const router = useRouter()
+const bus = inject('bus')
 const addAccountDialogOpe = ref(false)
 const newAccountName = ref("")
 const newAccountBrokerName = ref("")
 const newAccountBrokerNumber = ref("")
-const store = accountsStore()
 
 function processAdd() {
   store.addNewAccount(newAccountName.value, newAccountBrokerName.value, newAccountBrokerNumber.value)
@@ -56,8 +64,14 @@ function processAdd() {
 onMounted(() => {
   store.loadAccountsList()
 })
+bus.on('refreshAccountList', ()=>{store.loadAccountsList()})
+function showAccount(accountId) {
+  router.push('/account/'+accountId)
+}
 </script>
 
-<style scoped>
-
+<style scoped  lang="sass">
+.my-card
+  width: 100%
+  cursor: pointer
 </style>

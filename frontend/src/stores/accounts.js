@@ -65,3 +65,8 @@ export const accountsStore = defineStore('accounts', {
     },
   }
 })
+
+const store = accountsStore();
+store._p.$bus.on('accountReplenished', (x) => {
+  store.loadAccountsList(x)
+})
