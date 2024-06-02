@@ -63,4 +63,19 @@ class PurchasedAssetServiceImplTest {
 
         Assertions.assertEquals(200.0, assetArgumentCaptor.getValue().getAmount());
     }
+
+    @Test
+    @DisplayName("Успешное уменьшение актива если этот актив есть на счете")
+    void sellAsset_whenAssetIsFound_thenSaveAsset() {
+        UUID uuid1 = UUID.fromString("f99b9e41-4753-43ad-89cd-1874c3a35c90");
+        UUID accountUuid2 = UUID.fromString("f99b9e41-4753-43ad-89cd-1874c3a35c91");
+        PurchasedAsset validAsset = new PurchasedAsset(uuid1, "RUR", AssetType.CURRENCY, 100.0, 1.0, 1.0, accountUuid2);
+        Optional<PurchasedAsset> assetOptional = Optional.of(validAsset);
+        Mockito.when(mockRepository.findByAccountIdAndCode(any(), anyString())).thenReturn(assetOptional);
+
+        purchasedAssetService.sellAsset(accountUuid2, "RUR", 60.0);
+        verify(mockRepository).save(assetArgumentCaptor.capture());
+
+        Assertions.assertEquals(40.0, assetArgumentCaptor.getValue().getAmount());
+    }
 }
