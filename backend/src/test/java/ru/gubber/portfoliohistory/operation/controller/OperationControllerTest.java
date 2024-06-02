@@ -35,7 +35,7 @@ class OperationControllerTest {
     double amount = 205.1;
 
     @Test
-    @DisplayName("При сохранении некорректных данных счета- accountId.isEmpty возвращается ошибка валидации")
+    @DisplayName("При вводе некорректных данных счета- accountId.isEmpty возвращается ошибка валидации")
     void replenishAccount_whenAccountIdIsEmpty_thenReturnValidationError() {
         List<FieldValidationError> response = new ArrayList<>();
         response.add(new FieldValidationError("accountId","Поле не может быть пустым"));
@@ -45,7 +45,7 @@ class OperationControllerTest {
     }
 
     @Test
-    @DisplayName("При сохранении некорректных данных счета- amount null - возвращается ошибка валидации")
+    @DisplayName("При вводе некорректных данных счета- amount null - возвращается ошибка валидации")
     void replenishAccount_whenAmountIsNull_thenReturnValidationError() {
         List<FieldValidationError> response = new ArrayList<>();
         response.add(new FieldValidationError("amount","Поле не может быть пустым"));
@@ -81,6 +81,56 @@ class OperationControllerTest {
         ValidationError validationError = new ValidationError(ResponseStatus.WARN,
                 String.format("На счет %s не удалось добавить актив", accoundUUID.toString()), null);
         ValidationError resultError = (ValidationError) operationController.replenishAccount(new OperationDto(accoundUUID.toString(), amount));
+        Assertions.assertEquals(validationError.getErrorMessage(), resultError.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("Вывод средств - при вводе некорректных данных счета- accountId.isEmpty возвращается ошибка валидации")
+    void withdrawFromAccount_whenAccountIdIsEmpty_thenReturnValidationError() {
+        List<FieldValidationError> response = new ArrayList<>();
+        response.add(new FieldValidationError("accountId","Поле не может быть пустым"));
+        ValidationError responseError = new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", response);
+        ValidationError result = (ValidationError) operationController.withdrawFromAccount(new OperationDto("", amount));
+        Assertions.assertEquals(responseError.getErrorMessage(), result.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("Вывод средств - при вводе некорректных данных счета- accountId.isEmpty возвращается ошибка валидации")
+    void withdrawFromAccount_whenAmountIsNull_thenReturnValidationError() {
+        List<FieldValidationError> response = new ArrayList<>();
+        response.add(new FieldValidationError("amount","Поле не может быть пустым"));
+        ValidationError responseError = new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", response);
+        ValidationError result = (ValidationError) operationController.withdrawFromAccount(new OperationDto(accoundUUID.toString(), null));
+        Assertions.assertEquals(responseError.getErrorMessage(), result.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("Вызывается сервис")
+    void withdrawFromAccount_thenUseService() {
+        Mockito.when(mockOperationService.withdrawFromAccount(anyString(), any())).thenReturn(operationUUID);
+
+        operationController.withdrawFromAccount(new OperationDto(accoundUUID.toString(), amount));
+        verify(mockOperationService).withdrawFromAccount(anyString(), any());
+    }
+
+    @Test
+    @DisplayName("При выводе средств при корректных значениях dto возвращается ответ с корректным uuid")
+    void withdrawFromAccount_thenReturnUUID() {
+        Mockito.when(mockOperationService.withdrawFromAccount(anyString(), any())).thenReturn(operationUUID);
+
+        OutcomeOperationDto outcomeOperationDto = (OutcomeOperationDto) operationController.withdrawFromAccount(new OperationDto(accoundUUID.toString(), amount));
+        ResultOperationId result = (ResultOperationId) outcomeOperationDto.getResponse();
+
+        Assertions.assertEquals(operationUUID, result.id());
+    }
+
+    @Test
+    @DisplayName("При выводе средств при условии что из сервис возвращается ответ null - тогда вернуть Error ")
+    void withdrawFromAccount_whenUUIDisNull_thenReturnError() {
+        Mockito.when(mockOperationService.withdrawFromAccount(anyString(), any())).thenReturn(null);
+        ValidationError validationError = new ValidationError(ResponseStatus.ERROR,
+                "На счете не достаточно средств", null);
+        ValidationError resultError = (ValidationError) operationController.withdrawFromAccount(new OperationDto(accoundUUID.toString(), amount));
         Assertions.assertEquals(validationError.getErrorMessage(), resultError.getErrorMessage());
     }
 }
