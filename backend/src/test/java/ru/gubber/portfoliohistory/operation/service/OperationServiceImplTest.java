@@ -55,4 +55,29 @@ class OperationServiceImplTest {
         UUID resultUuid = operationService.replenishAccount(accoundUUID.toString(), amount);
         Assertions.assertNull(resultUuid);
     }
+
+    @Test
+    @DisplayName("Вывод средств - при существующем id счета возвращается uuid операции")
+    public void withdrawFromAccount_whenAccountExists_thenReturnOperationUUID() {
+        double amount = 105.3;
+        Mockito.when(mockAccountService.accountExists(any())).thenReturn(true);
+        Mockito.when(mockRepository.save(any())).thenAnswer(invocationOnMock ->
+                invocationOnMock.getArgument(0));
+
+        UUID resultUuid = operationService.withdrawFromAccount(accoundUUID.toString(), amount);
+        verify(mockAccountService).changeCurrentBalance(accoundUUID, amount * -1);
+        verify(mockRepository).save(operationArgumentCaptor.capture());
+        verify(mockPurchasedAssetService).sellAsset(accoundUUID, ASSET_CODE, amount);
+        Assertions.assertEquals(operationArgumentCaptor.getValue().getId(), resultUuid);
+    }
+
+    @Test
+    @DisplayName("Вывод средств - при несуществующем id счета возвращается null")
+    public void withdrawFromAccount_whenAccountNotExists_thenReturnNull() {
+        double amount = 105.3;
+        Mockito.when(mockAccountService.accountExists(any())).thenReturn(false);
+
+        UUID resultUuid = operationService.withdrawFromAccount(accoundUUID.toString(), amount);
+        Assertions.assertNull(resultUuid);
+    }
 }
