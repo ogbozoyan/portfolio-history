@@ -18,5 +18,5 @@ public interface AccountService {
 
     boolean accountExists(UUID accountUuid);
 
-    double setCurrentBalance(UUID accountUuid, double amount);
+    double changeCurrentBalance(UUID accountUuid, double amount);
 }

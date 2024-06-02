@@ -49,4 +49,26 @@ public class OperationController {
                     String.format("На счет %s не удалось добавить актив", dto.accountId()), null);
         }
     }
+
+    @PostMapping("/api/v1/withdraw-from-account")
+    public BaseResponse withdrawFromAccount(@RequestBody OperationDto dto) {
+        log.info("Получен запрос на вывод средств со счета {}.", dto.accountId());
+        List<FieldValidationError> invalidField = new ArrayList<>();
+        invalidField.add(ValidationUtils.validateStringField(dto.accountId()));
+        invalidField.add(ValidationUtils.validateNumberField(dto.amount(), "amount"));
+        List<FieldValidationError> validationErrors = invalidField.stream().filter(Objects::nonNull).toList();
+        if (!validationErrors.isEmpty()) {
+            log.info("Ошибка валидации - не правильный запрос.");
+            return new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", validationErrors);
+        }
+        UUID uuid = operationService.withdrawFromAccount(dto.accountId(), dto.amount());
+        if (uuid != null) {
+            log.info("Запрос на вывод средств успешно выполнен.");
+            return new OutcomeOperationDto(new ResultOperationId(uuid));
+        } else {
+            log.info("Не удалось выполнить запрос на вывод средств со счета {}", dto.accountId());
+            return new ValidationError(ResponseStatus.ERROR,
+                    "На счете не достаточно средств", null);
+        }
+    }
 }

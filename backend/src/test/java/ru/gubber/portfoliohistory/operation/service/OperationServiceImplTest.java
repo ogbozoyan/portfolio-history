@@ -40,7 +40,7 @@ class OperationServiceImplTest {
                 invocationOnMock.getArgument(0));
 
         UUID resultUuid = operationService.replenishAccount(accoundUUID.toString(), amount);
-        verify(mockAccountService).setCurrentBalance(accoundUUID, amount);
+        verify(mockAccountService).changeCurrentBalance(accoundUUID, amount);
         verify(mockRepository).save(operationArgumentCaptor.capture());
         verify(mockPurchasedAssetService).purchaseAsset(accoundUUID, ASSET_CODE, amount);
         Assertions.assertEquals(operationArgumentCaptor.getValue().getId(), resultUuid);
