@@ -13,8 +13,7 @@ import ru.gubber.portfoliohistory.purchasedasset.repository.PurchasedAssetReposi
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -77,5 +76,31 @@ class PurchasedAssetServiceImplTest {
         verify(mockRepository).save(assetArgumentCaptor.capture());
 
         Assertions.assertEquals(40.0, assetArgumentCaptor.getValue().getAmount());
+    }
+
+    @Test
+    @DisplayName("Уменьшение актива не происходит если этого актива нет на счете")
+    void sellAsset_whenAssetIsNotFound_thenReturn() {
+        UUID accountUuid2 = UUID.fromString("f99b9e41-4753-43ad-89cd-1874c3a35c91");
+        Optional<PurchasedAsset> assetOptional = Optional.empty();
+        Mockito.when(mockRepository.findByAccountIdAndCode(any(), anyString())).thenReturn(assetOptional);
+
+        purchasedAssetService.sellAsset(accountUuid2, "RUR", 5.0);
+        verify(mockRepository).findByAccountIdAndCode(any(), anyString());
+
+    }
+
+    @Test
+    @DisplayName("Уменьшение актива не происходит если количество этого актива меньше чем сумма снятия")
+    void sellAsset_whenAssetIsFoundAndAmountLess_thenReturn() {
+        UUID uuid1 = UUID.fromString("f99b9e41-4753-43ad-89cd-1874c3a35c90");
+        UUID accountUuid2 = UUID.fromString("f99b9e41-4753-43ad-89cd-1874c3a35c91");
+        PurchasedAsset validAsset = new PurchasedAsset(uuid1, "RUR", AssetType.CURRENCY, 1.0, 1.0, 1.0, accountUuid2);
+        Optional<PurchasedAsset> assetOptional = Optional.of(validAsset);
+        Mockito.when(mockRepository.findByAccountIdAndCode(any(), anyString())).thenReturn(assetOptional);
+
+        purchasedAssetService.sellAsset(accountUuid2, "RUR", 5.0);
+        verify(mockRepository).findByAccountIdAndCode(any(), anyString());
+
     }
 }
