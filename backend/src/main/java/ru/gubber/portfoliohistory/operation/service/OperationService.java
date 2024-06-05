@@ -6,5 +6,5 @@ public interface OperationService {
 
     UUID replenishAccount(String accountId, Double amount);
 
-    UUID withdrawFromAccount(String accountId, Double amount);
+    WithdrawalResult withdrawFromAccount(String accountId, Double amount);
 }

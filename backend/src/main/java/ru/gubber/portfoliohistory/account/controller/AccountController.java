@@ -33,9 +33,9 @@ public class AccountController {
     public BaseResponse createAccount(@RequestBody IncomeAccountDto dto) {
         log.info("Получен запрос на добавление счета {}.", dto.name());
         List<FieldValidationError> invalidField = new ArrayList<>();
-        invalidField.add(ValidationUtils.validateStringField(dto.name()));
-        invalidField.add(ValidationUtils.validateStringField(dto.broker()));
-        invalidField.add(ValidationUtils.validateStringField(dto.number()));
+        invalidField.add(ValidationUtils.validateStringField(dto.name(), "name"));
+        invalidField.add(ValidationUtils.validateStringField(dto.broker(), "broker"));
+        invalidField.add(ValidationUtils.validateStringField(dto.number(), "number"));
         List<FieldValidationError> validationErrors = invalidField.stream().filter(Objects::nonNull).toList();
         if (!validationErrors.isEmpty()) {
             log.info(VALIDATION_ERROR);
@@ -57,10 +57,10 @@ public class AccountController {
     public BaseResponse updateAccount(@RequestBody IncomeFullAccountDto dto) {
         log.info("Получен запрос на обновление счета {}.", dto.name());
         List<FieldValidationError> invalidField = new ArrayList<>();
-        invalidField.add(ValidationUtils.validateStringField(dto.id()));
-        invalidField.add(ValidationUtils.validateStringField(dto.name()));
-        invalidField.add(ValidationUtils.validateStringField(dto.broker()));
-        invalidField.add(ValidationUtils.validateStringField(dto.number()));
+        invalidField.add(ValidationUtils.validateStringField(dto.id(), "id"));
+        invalidField.add(ValidationUtils.validateStringField(dto.name(), "name"));
+        invalidField.add(ValidationUtils.validateStringField(dto.broker(), "broker"));
+        invalidField.add(ValidationUtils.validateStringField(dto.number(), "number"));
         List<FieldValidationError> validationErrors = invalidField.stream().filter(Objects::nonNull).toList();
         if (!validationErrors.isEmpty()) {
             log.info(VALIDATION_ERROR);
@@ -91,7 +91,7 @@ public class AccountController {
     public BaseResponse deleteAccount(@RequestBody IdIncomeAccountDto dto) {
         log.info("Получен запрос на удаление счета {}.", dto.id());
         List<FieldValidationError> invalidField = new ArrayList<>();
-        invalidField.add(ValidationUtils.validateStringField(dto.id()));
+        invalidField.add(ValidationUtils.validateStringField(dto.id(), "id"));
         List<FieldValidationError> validationErrors = invalidField.stream().filter(Objects::nonNull).toList();
         if (!validationErrors.isEmpty()) {
             log.info(VALIDATION_ERROR);
@@ -120,7 +120,7 @@ public class AccountController {
     public BaseResponse getAccountsInfo(@RequestBody IdIncomeAccountDto dto) {
         log.info("Получен запрос на предоставление информации о счете с Id {}", dto.id());
         List<FieldValidationError> invalidField = new ArrayList<>();
-        invalidField.add(ValidationUtils.validateStringField(dto.id()));
+        invalidField.add(ValidationUtils.validateStringField(dto.id(), "id"));
         List<FieldValidationError> validationErrors = invalidField.stream().filter(Objects::nonNull).toList();
         if (!validationErrors.isEmpty()) {
             log.info(VALIDATION_ERROR);

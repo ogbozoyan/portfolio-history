@@ -15,6 +15,8 @@ import ru.gubber.portfoliohistory.operation.dto.OperationDto;
 import ru.gubber.portfoliohistory.operation.dto.OutcomeOperationDto;
 import ru.gubber.portfoliohistory.operation.dto.ResultOperationId;
 import ru.gubber.portfoliohistory.operation.service.OperationService;
+import ru.gubber.portfoliohistory.operation.service.OperationStatus;
+import ru.gubber.portfoliohistory.operation.service.WithdrawalResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,7 +109,8 @@ class OperationControllerTest {
     @Test
     @DisplayName("Вызывается сервис")
     void withdrawFromAccount_thenUseService() {
-        Mockito.when(mockOperationService.withdrawFromAccount(anyString(), any())).thenReturn(operationUUID);
+        WithdrawalResult withdrawalResult = new WithdrawalResult(operationUUID, OperationStatus.SUCCESSFULLY);
+        Mockito.when(mockOperationService.withdrawFromAccount(anyString(), any())).thenReturn(withdrawalResult);
 
         operationController.withdrawFromAccount(new OperationDto(accoundUUID.toString(), amount));
         verify(mockOperationService).withdrawFromAccount(anyString(), any());
@@ -116,7 +119,9 @@ class OperationControllerTest {
     @Test
     @DisplayName("При выводе средств при корректных значениях dto возвращается ответ с корректным uuid")
     void withdrawFromAccount_thenReturnUUID() {
-        Mockito.when(mockOperationService.withdrawFromAccount(anyString(), any())).thenReturn(operationUUID);
+        WithdrawalResult withdrawalResult = new WithdrawalResult(operationUUID, OperationStatus.SUCCESSFULLY);
+
+        Mockito.when(mockOperationService.withdrawFromAccount(anyString(), any())).thenReturn(withdrawalResult);
 
         OutcomeOperationDto outcomeOperationDto = (OutcomeOperationDto) operationController.withdrawFromAccount(new OperationDto(accoundUUID.toString(), amount));
         ResultOperationId result = (ResultOperationId) outcomeOperationDto.getResponse();
@@ -125,11 +130,23 @@ class OperationControllerTest {
     }
 
     @Test
-    @DisplayName("При выводе средств при условии что из сервис возвращается ответ null - тогда вернуть Error ")
-    void withdrawFromAccount_whenUUIDisNull_thenReturnError() {
-        Mockito.when(mockOperationService.withdrawFromAccount(anyString(), any())).thenReturn(null);
+    @DisplayName("При выводе средств при условии что из сервис возвращается ответ ITEM_NOT_FOUND - тогда вернуть Error ")
+    void withdrawFromAccount_whenITEM_NOT_FOUND_thenReturnError() {
+        WithdrawalResult withdrawalResult = new WithdrawalResult(operationUUID, OperationStatus.ITEM_NOT_FOUND);
+        Mockito.when(mockOperationService.withdrawFromAccount(anyString(), any())).thenReturn(withdrawalResult);
         ValidationError validationError = new ValidationError(ResponseStatus.ERROR,
-                "На счете не достаточно средств", null);
+                String.format("Нет счёта с идентификатором %s", accoundUUID.toString()), null);
+        ValidationError resultError = (ValidationError) operationController.withdrawFromAccount(new OperationDto(accoundUUID.toString(), amount));
+        Assertions.assertEquals(validationError.getErrorMessage(), resultError.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("При выводе средств при условии что из сервис возвращается ответ NOT_ENOUGH_FUNDS - тогда вернуть Error ")
+    void withdrawFromAccount_whenNOT_ENOUGH_FUNDS_thenReturnError() {
+        WithdrawalResult withdrawalResult = new WithdrawalResult(operationUUID, OperationStatus.NOT_ENOUGH_FUNDS);
+        Mockito.when(mockOperationService.withdrawFromAccount(anyString(), any())).thenReturn(withdrawalResult);
+        ValidationError validationError = new ValidationError(ResponseStatus.ERROR,
+                String.format("На счете не достаточно средств", accoundUUID.toString()), null);
         ValidationError resultError = (ValidationError) operationController.withdrawFromAccount(new OperationDto(accoundUUID.toString(), amount));
         Assertions.assertEquals(validationError.getErrorMessage(), resultError.getErrorMessage());
     }
