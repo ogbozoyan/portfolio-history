@@ -66,8 +66,8 @@ class OperationServiceImplTest {
 
         WithdrawalResult withdrawalResult = operationService.withdrawFromAccount(accoundUUID.toString(), amount);
         verify(mockAccountService).changeCurrentBalance(accoundUUID, amount * -1);
-        verify(mockRepository).save(operationArgumentCaptor.capture());
         verify(mockPurchasedAssetService).sellAsset(accoundUUID, ASSET_CODE, amount);
+        verify(mockRepository).save(operationArgumentCaptor.capture());
         Assertions.assertEquals(operationArgumentCaptor.getValue().getId(), withdrawalResult.uuid());
     }
 
