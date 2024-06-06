@@ -113,7 +113,7 @@ class OperationControllerTest {
         Mockito.when(mockOperationService.withdrawFromAccount(anyString(), any())).thenReturn(withdrawalResult);
 
         operationController.withdrawFromAccount(new OperationDto(accoundUUID.toString(), amount));
-        verify(mockOperationService).withdrawFromAccount(anyString(), any());
+        verify(mockOperationService).withdrawFromAccount(accoundUUID.toString(), amount);
     }
 
     @Test
