@@ -1,14 +1,14 @@
 <template>
   <q-btn round
          size="sm"
-         icon="fas fa-dollar-sign"
-         title="Пополнить"
+         icon="fas fa-hand-holding-usd"
+         title="Вывести"
          @click="showDialog = true"
   />
   <q-dialog v-model="showDialog">
     <q-card>
       <q-card-section>
-        <div class="text-h6">Пополнить счёт</div>
+        <div class="text-h6">Вывести средства</div>
       </q-card-section>
 
       <q-card-section class="q-pt-none">
@@ -16,7 +16,7 @@
           <q-input
             filled
             v-model="amount"
-            label="Сумма к заполнению"
+            label="Сумма для вывода"
             mask="#.##"
             fill-mask="0"
             reverse-fill-mask
@@ -27,7 +27,7 @@
       </q-card-section>
 
       <q-card-actions align="right">
-        <q-btn flat label="Пополнить" color="primary" @click="replenish" type="a"/>
+        <q-btn flat label="Вывести" color="primary" @click="withdraw" type="a"/>
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -47,8 +47,8 @@ const amount = ref(0)
 const showDialog = ref(false)
 const bus = inject('bus')
 
-function replenish() {
-  store.replenishAccount(props.accountId, amount.value)
+function withdraw() {
+  store.withdrawFromAccount(props.accountId, amount.value)
 }
 bus.on(AccountEvents.accountChangeEvent, () => showDialog.value=false)
 </script>

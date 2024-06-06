@@ -6,12 +6,7 @@
       </div>
       <div class="col-auto q-pr-xs">
         <replenish-account-component :account-id="accountId"/>
-        <q-btn round
-               size="sm"
-               icon="fas fa-hand-holding-usd"
-               title="Снять"
-               disable
-        />
+        <withdraw-account-component :account-id="accountId" />
         <q-btn round
                size="sm"
                icon="edit"
@@ -66,6 +61,7 @@ import {accountsStore} from "stores/accounts.js";
 import {onBeforeUpdate, onMounted, ref, watch} from "vue";
 import {storeToRefs} from "pinia";
 import ReplenishAccountComponent from "components/ReplenishAccountComponent.vue";
+import WithdrawAccountComponent from "components/WithdrawAccountComponent.vue";
 
 const router = useRouter()
 const store = accountsStore()
