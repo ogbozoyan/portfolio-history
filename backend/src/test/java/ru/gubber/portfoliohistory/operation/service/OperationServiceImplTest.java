@@ -81,4 +81,15 @@ class OperationServiceImplTest {
         WithdrawalResult withdrawalResult = operationService.withdrawFromAccount(accoundUUID.toString(), amount);
         Assertions.assertEquals(OperationStatus.ITEM_NOT_FOUND.name(), withdrawalResult.status().name());
     }
+
+    @Test
+    @DisplayName("Вывод средств - при получении false возвращается NOT_ENOUGH_FUNDS")
+    public void withdrawFromAccount_whenAccountIsExistsAndFalse_thenReturnNOT_ENOUGH_FUNDS() {
+        double amount = 105.3;
+        Mockito.when(mockAccountService.accountExists(any())).thenReturn(true);
+        Mockito.when(mockPurchasedAssetService.sellAsset(any(), anyString(), anyDouble())).thenReturn(false);
+
+        WithdrawalResult withdrawalResult = operationService.withdrawFromAccount(accoundUUID.toString(), amount);
+        Assertions.assertEquals(OperationStatus.NOT_ENOUGH_FUNDS.name(), withdrawalResult.status().name());
+    }
 }
