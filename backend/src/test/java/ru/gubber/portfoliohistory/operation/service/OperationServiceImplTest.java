@@ -13,7 +13,7 @@ import ru.gubber.portfoliohistory.operation.repository.OperationRepository;
 
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -61,6 +61,7 @@ class OperationServiceImplTest {
     public void withdrawFromAccount_whenAccountExists_thenReturnOperationUUID() {
         double amount = 105.3;
         Mockito.when(mockAccountService.accountExists(any())).thenReturn(true);
+        Mockito.when(mockPurchasedAssetService.sellAsset(any(), anyString(), anyDouble())).thenReturn(true);
         Mockito.when(mockRepository.save(any())).thenAnswer(invocationOnMock ->
                 invocationOnMock.getArgument(0));
 
