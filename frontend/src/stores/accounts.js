@@ -1,5 +1,6 @@
 import {defineStore} from 'pinia'
 import {accountsConnector} from "src/api/accounts-connector.js";
+import {AccountEvents} from "src/events/accountEvents.js";
 
 export const accountsStore = defineStore('accounts', {
   state: () => ({
@@ -67,6 +68,6 @@ export const accountsStore = defineStore('accounts', {
 })
 
 const store = accountsStore();
-store._p.$bus.on('accountReplenished', (x) => {
+store._p.$bus.on(AccountEvents.accountChangeEvent, (x) => {
   store.loadAccountsList(x)
 })
