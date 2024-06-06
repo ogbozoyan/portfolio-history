@@ -79,6 +79,19 @@ class PurchasedAssetServiceImplTest {
     }
 
     @Test
+    @DisplayName("Успешное удаление актива, если после снятия актив равен 0")
+    void sellAsset_whenAssetIs0_thenDeleteAsset() {
+        UUID uuid1 = UUID.fromString("f99b9e41-4753-43ad-89cd-1874c3a35c90");
+        UUID accountUuid2 = UUID.fromString("f99b9e41-4753-43ad-89cd-1874c3a35c91");
+        PurchasedAsset validAsset = new PurchasedAsset(uuid1, "RUR", AssetType.CURRENCY, 105.0, 1.0, 1.0, accountUuid2);
+        Optional<PurchasedAsset> assetOptional = Optional.of(validAsset);
+        Mockito.when(mockRepository.findByAccountIdAndCode(any(), anyString())).thenReturn(assetOptional);
+
+        purchasedAssetService.sellAsset(accountUuid2, "RUR", 105.0);
+        verify(mockRepository).delete(any());
+    }
+
+    @Test
     @DisplayName("Уменьшение актива не происходит если этого актива нет на счете")
     void sellAsset_whenAssetIsNotFound_thenReturn() {
         UUID accountUuid2 = UUID.fromString("f99b9e41-4753-43ad-89cd-1874c3a35c91");

@@ -38,6 +38,10 @@ public class PurchasedAssetServiceImpl implements PurchasedAssetService {
         }
         PurchasedAsset asset = optionalPurchasedAsset.get();
         asset.setAmount(asset.getAmount() + amount * -1);
+        if (asset.getAmount() == 0) {
+            repository.delete(asset);
+            return true;
+        }
         repository.save(asset);
         return true;
     }
