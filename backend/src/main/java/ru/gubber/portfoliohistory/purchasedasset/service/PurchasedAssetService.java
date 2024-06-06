@@ -4,4 +4,6 @@ import java.util.UUID;
 
 public interface PurchasedAssetService {
     void purchaseAsset(UUID accountId, String code, Double amount);
+
+    boolean sellAsset(UUID accountId, String code, Double amount);
 }

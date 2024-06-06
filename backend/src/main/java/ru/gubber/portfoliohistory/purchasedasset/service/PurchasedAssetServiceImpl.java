@@ -29,4 +29,20 @@ public class PurchasedAssetServiceImpl implements PurchasedAssetService {
             repository.save(asset);
         }
     }
+
+    @Override
+    public boolean sellAsset(UUID accountId, String code, Double amount) {
+        Optional<PurchasedAsset> optionalPurchasedAsset = repository.findByAccountIdAndCode(accountId, code);
+        if (optionalPurchasedAsset.isEmpty() || (optionalPurchasedAsset.get().getAmount() < amount)) {
+            return false;
+        }
+        PurchasedAsset asset = optionalPurchasedAsset.get();
+        asset.setAmount(asset.getAmount() + amount * -1);
+        if (asset.getAmount() == 0) {
+            repository.delete(asset);
+            return true;
+        }
+        repository.save(asset);
+        return true;
+    }
 }

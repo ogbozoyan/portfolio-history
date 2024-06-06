@@ -182,12 +182,12 @@ class AccountServiceImplTest {
 
     @Test
     @DisplayName("Счет сохраняется с текущим балансом 105")
-    public void setCurrentBalance() {
+    public void changeCurrentBalance() {
         UUID uuid2 = UUID.fromString("b1acc051-ea56-4ffc-a249-67010f8dd132");
         Account validAccount2 = new Account(uuid2, "БКС2", "БКС", "02", 844.);
         Optional<Account> optionalAccount = Optional.of(validAccount2);
         Mockito.when(mockRepository.findById(any())).thenReturn(optionalAccount);
-        double result = accountService.setCurrentBalance(uuid2, 105);
+        double result = accountService.changeCurrentBalance(uuid2, 105);
         verify(mockRepository).save(accountArgumentCaptor.capture());
         Assertions.assertEquals(accountArgumentCaptor.getValue().getCurrentBalance(), result);
     }

@@ -30,9 +30,24 @@ public class OperationServiceImpl implements OperationService {
         if (accountService.accountExists(accountUuid)) {
             Operation operation = repository.save(new Operation(UUID.randomUUID(), LocalDateTime.now(), accountUuid, ASSET_CODE, OperationType.REPLENISHMENT, amount, UNIT_PRICE));
             purchasedAssetService.purchaseAsset(accountUuid, ASSET_CODE, amount);
-            accountService.setCurrentBalance(accountUuid, amount);
+            accountService.changeCurrentBalance(accountUuid, amount);
             return operation.getId();
         }
         return null;
+    }
+
+    @Override
+    public WithdrawalResult withdrawFromAccount(String accountId, Double amount) {
+        UUID accountUuid = UUID.fromString(accountId);
+        if (accountService.accountExists(accountUuid)) {
+            boolean sellAsset = purchasedAssetService.sellAsset(accountUuid, ASSET_CODE, amount);
+            if (!sellAsset) {
+                return new WithdrawalResult(accountUuid, OperationStatus.NOT_ENOUGH_FUNDS);
+            }
+            Operation operation = repository.save(new Operation(UUID.randomUUID(), LocalDateTime.now(), accountUuid, ASSET_CODE, OperationType.WITHDRAW, amount, UNIT_PRICE));
+            accountService.changeCurrentBalance(accountUuid, amount * -1);
+            return new WithdrawalResult(operation.getId(), OperationStatus.SUCCESSFULLY);
+        }
+        return new WithdrawalResult(accountUuid, OperationStatus.ITEM_NOT_FOUND);
     }
 }

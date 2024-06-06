@@ -14,14 +14,14 @@ class ValidationUtilsTest {
     @NullSource
     @ValueSource(strings = { "", "                ", "\t" })
     void validateStringField_shouldReturnCorrectError(String str) {
-        FieldValidationError fieldValidationError = ValidationUtils.validateStringField(str);
+        FieldValidationError fieldValidationError = ValidationUtils.validateStringField(str, "name");
         assertNotNull(fieldValidationError);
     }
 
     @Test
     @DisplayName("При непустой строке возвращается null")
     void validateStringField_whenStringNotEmpty_thenReturnNull() {
-        FieldValidationError fieldValidationError = ValidationUtils.validateStringField("проверка");
+        FieldValidationError fieldValidationError = ValidationUtils.validateStringField("проверка", "name");
         assertNull(fieldValidationError);
     }
 }

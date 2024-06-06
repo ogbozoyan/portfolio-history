@@ -79,7 +79,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public double setCurrentBalance(UUID accountUuid, double amount) {
+    public double changeCurrentBalance(UUID accountUuid, double amount) {
         Account account = repository.findById(accountUuid).get();
         account.setCurrentBalance(account.getCurrentBalance() + amount);
         repository.save(account);
