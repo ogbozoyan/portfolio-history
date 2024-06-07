@@ -80,4 +80,10 @@ public class OperationController {
             }
         }
     }
+
+    @PostMapping("/api/v1/get-purchased-assets-list")
+    public BaseResponse getPurchasedAssetsList() {
+        log.info("Получен запрос на предоставление списка всех активов.");
+
+    }
 }
