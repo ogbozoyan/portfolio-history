@@ -27,7 +27,6 @@ class PurchasedAssetControllerTest {
     private PurchasedAssetController purchasedAssetController;
     @Mock
     private PurchasedAssetService mockPurchasedAssetService;
-    private final PurchasedAssetMapper mapper = new PurchasedAssetMapper();
     UUID uuid = UUID.fromString("f99b9e41-4753-43ad-89cd-1874c3a35c89");
     UUID accountUuid = UUID.fromString("f99b9e41-4753-43ad-89cd-1874c3a35c89");
     PurchasedAsset validAsset1 = new PurchasedAsset(uuid, "RUR", AssetType.CURRENCY, 100.0, 1.0, 1.0, accountUuid);
@@ -54,7 +53,7 @@ class PurchasedAssetControllerTest {
         purchasedAssets.add(validAsset1);
         purchasedAssets.add(validAsset2);
         Mockito.when(mockPurchasedAssetService.getPurchasedAssetsList()).thenReturn(purchasedAssets);
-        List<PurchasedAssetFullDto> dtos = purchasedAssets.stream().map(mapper::toPurchasedAssetFullDto).toList();
+        List<PurchasedAssetFullDto> dtos = purchasedAssets.stream().map(PurchasedAssetMapper::toPurchasedAssetFullDto).toList();
 
         OutcomePurchasedAssetDto response = (OutcomePurchasedAssetDto) purchasedAssetController.getPurchasedAssetsList();
         List<PurchasedAssetFullDto> resultDtos = (List<PurchasedAssetFullDto>) response.getResponse();

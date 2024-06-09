@@ -32,7 +32,6 @@ class AccountControllerTest {
     private final UUID uuid2 = UUID.fromString("b1acc051-ea56-4ffc-a249-67010f8dd132");
     private final Account validAccount1 = new Account(uuid1, "БКС1", "БКС", "01", 0.0);
     private final Account validAccount2 = new Account(uuid2, "БКС2", "БКС", "02", 0.0);
-    private final AccountMapper mapper = new AccountMapper();
 
     @Test
     @DisplayName("Вызывается сервис")
@@ -212,7 +211,7 @@ class AccountControllerTest {
         accounts.add(validAccount1);
         accounts.add(validAccount2);
         Mockito.when(mockAccountService.getAccountsList()).thenReturn(accounts);
-        List<AccountDto> dtos = accounts.stream().map(mapper::toAccountDto).toList();
+        List<AccountDto> dtos = accounts.stream().map(AccountMapper::toAccountDto).toList();
 
         OutcomeAccountDto response = (OutcomeAccountDto)accountController.getAccountsList();
         List<AccountDto> resultDtos = (List<AccountDto>) response.getResponse();

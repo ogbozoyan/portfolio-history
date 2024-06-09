@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 public class AccountController {
     private final AccountService accountService;
     private final Logger log = LoggerFactory.getLogger(AccountController.class);
-    private final AccountMapper mapper = new AccountMapper();
     private final String VALIDATION_ERROR = "Ошибка валидации. Не правильный запрос";
 
     public AccountController(AccountService accountService) {
@@ -111,7 +110,7 @@ public class AccountController {
     @PostMapping("/api/v1/get-accounts-list")
     public BaseResponse getAccountsList() {
         log.info("Получен запрос на предоставление списка всех счетов.");
-        List<AccountDto> dtos = accountService.getAccountsList().stream().map(mapper::toAccountDto).collect(Collectors.toList());
+        List<AccountDto> dtos = accountService.getAccountsList().stream().map(AccountMapper::toAccountDto).collect(Collectors.toList());
         log.info("Список счетов получен.");
         return new OutcomeAccountDto(dtos);
     }
@@ -128,7 +127,7 @@ public class AccountController {
         }
         Account accountsInfo = accountService.getAccountsInfo(dto.id());
         if (accountsInfo != null) {
-            AccountDto result = mapper.toAccountDto(accountsInfo);
+            AccountDto result = AccountMapper.toAccountDto(accountsInfo);
             log.info("Запрос успешно выполнен.");
             return new BaseResponse(ResponseStatus.SUCCESS, null, result);
         } else {

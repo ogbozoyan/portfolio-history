@@ -16,7 +16,6 @@ import java.util.List;
 @RestController
 public class PurchasedAssetController {
     private final PurchasedAssetService purchasedAssetService;
-    private final PurchasedAssetMapper purchasedAssetMapper = new PurchasedAssetMapper();
     private final Logger log = LoggerFactory.getLogger(AccountController.class);
 
     public PurchasedAssetController(PurchasedAssetService purchasedAssetService) {
@@ -27,7 +26,7 @@ public class PurchasedAssetController {
     public BaseResponse getPurchasedAssetsList() {
         log.info("Получен запрос на предоставление списка всех активов.");
         List<PurchasedAssetFullDto> dtos = purchasedAssetService.getPurchasedAssetsList().stream()
-                .map(purchasedAssetMapper::toPurchasedAssetFullDto)
+                .map(PurchasedAssetMapper::toPurchasedAssetFullDto)
                 .toList();
         log.info("Список активов получен.");
         return new OutcomePurchasedAssetDto(dtos);
