@@ -7,11 +7,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.gubber.portfoliohistory.account.controller.AccountController;
 import ru.gubber.portfoliohistory.account.dto.*;
+import ru.gubber.portfoliohistory.common.dto.BaseResponse;
+import ru.gubber.portfoliohistory.common.dto.ResponseId;
+import ru.gubber.portfoliohistory.common.dto.ResponseStatus;
 import ru.gubber.portfoliohistory.common.utils.FieldValidationError;
 import ru.gubber.portfoliohistory.common.utils.ValidationUtils;
 import ru.gubber.portfoliohistory.operation.dto.OperationDto;
 import ru.gubber.portfoliohistory.operation.dto.OutcomeOperationDto;
-import ru.gubber.portfoliohistory.operation.dto.ResultOperationId;
 import ru.gubber.portfoliohistory.operation.service.OperationService;
 import ru.gubber.portfoliohistory.operation.service.WithdrawalResult;
 
@@ -43,7 +45,7 @@ public class OperationController {
         UUID uuid = operationService.replenishAccount(dto.accountId(), dto.amount());
         if (uuid != null) {
             log.info("Запрос успешно выполнен.");
-            return new OutcomeOperationDto(new ResultOperationId(uuid));
+            return new OutcomeOperationDto(new ResponseId(uuid));
         } else {
             log.info("Не удалось выполнить запрос на добавление актива на счет {}", dto.accountId());
             return new ValidationError(ResponseStatus.WARN,
@@ -76,7 +78,7 @@ public class OperationController {
             }
             default -> {
                 log.info("Запрос на вывод средств успешно выполнен.");
-                return new OutcomeOperationDto(new ResultOperationId(withdrawalResult.uuid()));
+                return new OutcomeOperationDto(new ResponseId(withdrawalResult.uuid()));
             }
         }
     }

@@ -8,12 +8,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.gubber.portfoliohistory.account.dto.ResponseStatus;
+import ru.gubber.portfoliohistory.common.dto.ResponseId;
+import ru.gubber.portfoliohistory.common.dto.ResponseStatus;
 import ru.gubber.portfoliohistory.account.dto.ValidationError;
 import ru.gubber.portfoliohistory.common.utils.FieldValidationError;
 import ru.gubber.portfoliohistory.operation.dto.OperationDto;
 import ru.gubber.portfoliohistory.operation.dto.OutcomeOperationDto;
-import ru.gubber.portfoliohistory.operation.dto.ResultOperationId;
 import ru.gubber.portfoliohistory.operation.service.OperationService;
 import ru.gubber.portfoliohistory.operation.service.OperationStatus;
 import ru.gubber.portfoliohistory.operation.service.WithdrawalResult;
@@ -71,7 +71,7 @@ class OperationControllerTest {
         Mockito.when(mockOperationService.replenishAccount(anyString(), any())).thenReturn(operationUUID);
 
         OutcomeOperationDto outcomeOperationDto = (OutcomeOperationDto) operationController.replenishAccount(new OperationDto(accoundUUID.toString(), amount));
-        ResultOperationId result = (ResultOperationId) outcomeOperationDto.getResponse();
+        ResponseId result = (ResponseId) outcomeOperationDto.getResponse();
 
         Assertions.assertEquals(operationUUID, result.id());
     }
@@ -124,7 +124,7 @@ class OperationControllerTest {
         Mockito.when(mockOperationService.withdrawFromAccount(anyString(), any())).thenReturn(withdrawalResult);
 
         OutcomeOperationDto outcomeOperationDto = (OutcomeOperationDto) operationController.withdrawFromAccount(new OperationDto(accoundUUID.toString(), amount));
-        ResultOperationId result = (ResultOperationId) outcomeOperationDto.getResponse();
+        ResponseId result = (ResponseId) outcomeOperationDto.getResponse();
 
         Assertions.assertEquals(operationUUID, result.id());
     }

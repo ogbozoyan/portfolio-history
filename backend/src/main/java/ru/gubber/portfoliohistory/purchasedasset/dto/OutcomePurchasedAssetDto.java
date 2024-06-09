@@ -1,7 +1,7 @@
 package ru.gubber.portfoliohistory.purchasedasset.dto;
 
-import ru.gubber.portfoliohistory.account.dto.BaseResponse;
-import ru.gubber.portfoliohistory.account.dto.ResponseStatus;
+import ru.gubber.portfoliohistory.common.dto.BaseResponse;
+import ru.gubber.portfoliohistory.common.dto.ResponseStatus;
 
 import java.util.List;
 

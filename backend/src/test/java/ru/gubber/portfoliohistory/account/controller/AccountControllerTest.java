@@ -13,6 +13,9 @@ import ru.gubber.portfoliohistory.account.model.Account;
 import ru.gubber.portfoliohistory.account.service.AccountService;
 import ru.gubber.portfoliohistory.account.service.UpdateStatus;
 import ru.gubber.portfoliohistory.account.service.UpdatingResult;
+import ru.gubber.portfoliohistory.common.dto.BaseResponse;
+import ru.gubber.portfoliohistory.common.dto.ResponseId;
+import ru.gubber.portfoliohistory.common.dto.ResponseStatus;
 import ru.gubber.portfoliohistory.common.utils.FieldValidationError;
 
 import java.util.ArrayList;

@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.gubber.portfoliohistory.account.controller.AccountController;
-import ru.gubber.portfoliohistory.account.dto.BaseResponse;
+import ru.gubber.portfoliohistory.common.dto.BaseResponse;
 import ru.gubber.portfoliohistory.purchasedasset.dto.OutcomePurchasedAssetDto;
 import ru.gubber.portfoliohistory.purchasedasset.dto.PurchasedAssetFullDto;
 import ru.gubber.portfoliohistory.purchasedasset.dto.PurchasedAssetMapper;
