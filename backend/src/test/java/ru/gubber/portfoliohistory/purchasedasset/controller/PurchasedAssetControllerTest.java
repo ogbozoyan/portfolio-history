@@ -8,7 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.gubber.portfoliohistory.purchasedasset.dto.OutcomePurchasedAssetDto;
+import ru.gubber.portfoliohistory.common.dto.SuccessResponseDto;
 import ru.gubber.portfoliohistory.purchasedasset.dto.PurchasedAssetFullDto;
 import ru.gubber.portfoliohistory.purchasedasset.dto.PurchasedAssetMapper;
 import ru.gubber.portfoliohistory.purchasedasset.model.AssetType;
@@ -55,7 +55,7 @@ class PurchasedAssetControllerTest {
         Mockito.when(mockPurchasedAssetService.getPurchasedAssetsList()).thenReturn(purchasedAssets);
         List<PurchasedAssetFullDto> dtos = purchasedAssets.stream().map(PurchasedAssetMapper::toPurchasedAssetFullDto).toList();
 
-        OutcomePurchasedAssetDto response = (OutcomePurchasedAssetDto) purchasedAssetController.getPurchasedAssetsList();
+        SuccessResponseDto<List<PurchasedAssetFullDto>> response = (SuccessResponseDto<List<PurchasedAssetFullDto>>) purchasedAssetController.getPurchasedAssetsList();
         List<PurchasedAssetFullDto> resultDtos = (List<PurchasedAssetFullDto>) response.getResponse();
 
         Assertions.assertEquals(dtos.size(), resultDtos.size());

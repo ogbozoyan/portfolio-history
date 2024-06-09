@@ -13,9 +13,9 @@ import ru.gubber.portfoliohistory.account.model.Account;
 import ru.gubber.portfoliohistory.account.service.AccountService;
 import ru.gubber.portfoliohistory.account.service.UpdateStatus;
 import ru.gubber.portfoliohistory.account.service.UpdatingResult;
-import ru.gubber.portfoliohistory.common.dto.BaseResponse;
 import ru.gubber.portfoliohistory.common.dto.ResponseId;
 import ru.gubber.portfoliohistory.common.dto.ResponseStatus;
+import ru.gubber.portfoliohistory.common.dto.SuccessResponseDto;
 import ru.gubber.portfoliohistory.common.utils.FieldValidationError;
 
 import java.util.ArrayList;
@@ -56,7 +56,7 @@ class AccountControllerTest {
 
         Mockito.when(mockAccountService.createAccount("БКС3", "БКС", "03")).thenReturn(account3.getId());
 
-        IdOutcomeAccountDto responseResult = (IdOutcomeAccountDto) accountController.createAccount(new IncomeAccountDto("БКС3", "БКС", "03"));
+        SuccessResponseDto<ResponseId> responseResult = (SuccessResponseDto<ResponseId>) accountController.createAccount(new IncomeAccountDto("БКС3", "БКС", "03"));
         ResponseId responseId = (ResponseId)responseResult.getResponse();
         UUID resultUUID = responseId.id();
         Assertions.assertEquals(account3.getId(), resultUUID);
@@ -131,7 +131,7 @@ class AccountControllerTest {
 
         Mockito.when(mockAccountService.updateAccount(anyString(), anyString(), anyString(), anyString())).thenReturn(updatingResult);
 
-        IdOutcomeAccountDto responseResult = (IdOutcomeAccountDto) accountController.updateAccount(new IncomeFullAccountDto(uuid3.toString(), "БКС3", "БКС", "03"));
+        SuccessResponseDto<ResponseId> responseResult = (SuccessResponseDto<ResponseId>) accountController.updateAccount(new IncomeFullAccountDto(uuid3.toString(), "БКС3", "БКС", "03"));
         ResponseId response = (ResponseId) responseResult.getResponse();
         UUID resultUUID = response.id();
 
@@ -216,7 +216,7 @@ class AccountControllerTest {
         Mockito.when(mockAccountService.getAccountsList()).thenReturn(accounts);
         List<AccountDto> dtos = accounts.stream().map(AccountMapper::toAccountDto).toList();
 
-        OutcomeAccountDto response = (OutcomeAccountDto)accountController.getAccountsList();
+        SuccessResponseDto<List<AccountDto>> response = (SuccessResponseDto<List<AccountDto>>)accountController.getAccountsList();
         List<AccountDto> resultDtos = (List<AccountDto>) response.getResponse();
 
         Assertions.assertEquals(dtos.size(), resultDtos.size());
@@ -227,7 +227,7 @@ class AccountControllerTest {
     void getAccountsInfo_thenReturnDto() {
         Mockito.when(mockAccountService.getAccountsInfo(anyString())).thenReturn(validAccount1);
 
-        BaseResponse accountsInfo = accountController.getAccountsInfo(new IdIncomeAccountDto(validAccount1.getId().toString()));
+        SuccessResponseDto<AccountDto> accountsInfo = (SuccessResponseDto<AccountDto>)accountController.getAccountsInfo(new IdIncomeAccountDto(validAccount1.getId().toString()));
         AccountDto response = (AccountDto) accountsInfo.getResponse();
 
         Assertions.assertAll(
