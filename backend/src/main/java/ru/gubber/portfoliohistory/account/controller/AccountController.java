@@ -66,7 +66,7 @@ public class AccountController {
             log.info(VALIDATION_ERROR);
             return new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", validationErrors);
             }
-        UpdatingResult updatingResult = accountService.updateAccount(dto.id(), dto.name(), dto.broker(), dto.number());
+        UpdatingResult updatingResult = accountService.updateAccount(UUID.fromString(dto.id()), dto.name(), dto.broker(), dto.number());
         switch (updatingResult.status()) {
             case UNSUCCESSFULLY -> {
                 String errorMessage = String.format("В системе уже зарегистрирован счёт %s у брокера %s", dto.number(), dto.broker());
@@ -97,7 +97,7 @@ public class AccountController {
             log.info(VALIDATION_ERROR);
             return new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", validationErrors);
         }
-        UUID uuid = accountService.deleteAccount(dto.id());
+        UUID uuid = accountService.deleteAccount(UUID.fromString(dto.id()));
         if (uuid != null) {
             log.info("Удален аккаунт с ID {}", dto.id());
             return new SuccessResponseDto<>(new ResponseId(uuid));

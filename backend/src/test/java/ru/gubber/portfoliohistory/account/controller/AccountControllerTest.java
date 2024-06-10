@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 
@@ -108,10 +109,10 @@ class AccountControllerTest {
     void updateAccount_thenUseService() {
         UUID uuid3 = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c47");
         UpdatingResult updatingResult = new UpdatingResult(uuid3, UpdateStatus.SUCCESSFULLY);
-        Mockito.when(mockAccountService.updateAccount(uuid3.toString(),"БКС3", "БКС", "03")).thenReturn(updatingResult);
+        Mockito.when(mockAccountService.updateAccount(uuid3,"БКС3", "БКС", "03")).thenReturn(updatingResult);
 
         accountController.updateAccount(new IncomeFullAccountDto("f21c831f-9807-4de5-88c7-61cfe33e1c47", "БКС3", "БКС", "03"));
-        verify(mockAccountService).updateAccount(uuid3.toString(),"БКС3", "БКС", "03");
+        verify(mockAccountService).updateAccount(uuid3,"БКС3", "БКС", "03");
     }
 
     @Test
@@ -140,7 +141,7 @@ class AccountControllerTest {
         UUID uuid3 = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c47");
         UpdatingResult updatingResult = new UpdatingResult(uuid3, UpdateStatus.SUCCESSFULLY);
 
-        Mockito.when(mockAccountService.updateAccount(anyString(), anyString(), anyString(), anyString())).thenReturn(updatingResult);
+        Mockito.when(mockAccountService.updateAccount(any(), anyString(), anyString(), anyString())).thenReturn(updatingResult);
 
         SuccessResponseDto<ResponseId> responseResult = (SuccessResponseDto<ResponseId>) accountController.updateAccount(new IncomeFullAccountDto(uuid3.toString(), "БКС3", "БКС", "03"));
         ResponseId response = (ResponseId) responseResult.getResponse();
@@ -154,7 +155,7 @@ class AccountControllerTest {
     void updateAccount_whenUUIDisNull_thenReturnError() {
         UUID uuid = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c50");
         UpdatingResult updatingResult = new UpdatingResult(uuid, UpdateStatus.ITEM_NOT_FOUND);
-        Mockito.when(mockAccountService.updateAccount(anyString(), anyString(), anyString(), anyString())).thenReturn(updatingResult);
+        Mockito.when(mockAccountService.updateAccount(any(), anyString(), anyString(), anyString())).thenReturn(updatingResult);
         ValidationError validationError = new ValidationError(ResponseStatus.WARN,
                 String.format("Нет счёта с идентификатором %s", "f21c831f-9807-4de5-88c7-61cfe33e1c50"), null);
         ValidationError result = (ValidationError) accountController.updateAccount(new IncomeFullAccountDto("f21c831f-9807-4de5-88c7-61cfe33e1c50", "БКС3", "БКС", "БКС3"));
@@ -167,7 +168,7 @@ class AccountControllerTest {
         UUID uuid3 = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c47");
         UpdatingResult updatingResult = new UpdatingResult(uuid3, UpdateStatus.UNSUCCESSFULLY);
 
-        Mockito.when(mockAccountService.updateAccount(anyString(), anyString(), anyString(), anyString())).thenReturn(updatingResult);
+        Mockito.when(mockAccountService.updateAccount(any(), anyString(), anyString(), anyString())).thenReturn(updatingResult);
         ValidationError validationError = new ValidationError(ResponseStatus.WARN,
                 String.format("В системе уже зарегистрирован счёт %s у брокера %s", "04", "БКС"), null);
         ValidationError result = (ValidationError) accountController.updateAccount(new IncomeFullAccountDto(uuid3.toString(), "a", "БКС", "04"));
@@ -179,11 +180,11 @@ class AccountControllerTest {
     void deleteAccount_thenUseService() {
         UUID uuid3 = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c47");
 
-        Mockito.when(mockAccountService.deleteAccount(uuid3.toString())).thenReturn(uuid3);
+        Mockito.when(mockAccountService.deleteAccount(uuid3)).thenReturn(uuid3);
 
         accountController.deleteAccount(new RequestAccountIdDto(uuid3.toString()));
 
-        verify(mockAccountService).deleteAccount(uuid3.toString());
+        verify(mockAccountService).deleteAccount(uuid3);
     }
 
     @Test
@@ -199,7 +200,7 @@ class AccountControllerTest {
     @Test
     @DisplayName("При удалении счета при получении из сервиса значения null возвращается Error")
     void deleteAccount_whenUUIDisNull_thenReturnError() {
-        Mockito.when(mockAccountService.deleteAccount(anyString())).thenReturn(null);
+        Mockito.when(mockAccountService.deleteAccount(any())).thenReturn(null);
         ValidationError validationError = new ValidationError(ResponseStatus.WARN,
                 String.format("Нет счёта с идентификатором %s", "f21c831f-9807-4de5-88c7-61cfe33e1c50"), null);
         ValidationError result = (ValidationError) accountController.deleteAccount(new RequestAccountIdDto("f21c831f-9807-4de5-88c7-61cfe33e1c50"));

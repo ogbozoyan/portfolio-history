@@ -8,9 +8,9 @@ import java.util.UUID;
 public interface AccountService {
     UUID createAccount(String name, String broker, String number);
 
-    UpdatingResult updateAccount(String id, String name, String broker, String number);
+    UpdatingResult updateAccount(UUID id, String name, String broker, String number);
 
-    UUID deleteAccount(String id);
+    UUID deleteAccount(UUID id);
 
     List<Account> getAccountsList();
 

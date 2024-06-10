@@ -60,7 +60,7 @@ class AccountServiceImplTest {
         UpdatingResult updatingResult = new UpdatingResult(UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c46"), UpdateStatus.ITEM_NOT_FOUND);
         Mockito.when(mockRepository.findById(any())).thenReturn(empty);
 
-        UpdatingResult result = accountService.updateAccount("f21c831f-9807-4de5-88c7-61cfe33e1c46", "БКС11", "БКС-", "011");
+        UpdatingResult result = accountService.updateAccount(UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c46"), "БКС11", "БКС-", "011");
 
         Assertions.assertEquals(updatingResult.status(), result.status());
     }
@@ -77,7 +77,7 @@ class AccountServiceImplTest {
         Mockito.when(mockRepository.findById(any())).thenReturn(optionalAccount);
         Mockito.when(mockRepository.findByBrokerAndNumber(anyString(), anyString())).thenReturn(Optional.of(validAccountTemp));
 
-        UpdatingResult result = accountService.updateAccount("f21c831f-9807-4de5-88c7-61cfe33e1c46", "БКС", "БКС", "01");
+        UpdatingResult result = accountService.updateAccount(UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c46"), "БКС", "БКС", "01");
 
         Assertions.assertEquals(updatingResult.status(), result.status());
     }
@@ -93,7 +93,7 @@ class AccountServiceImplTest {
         Mockito.when(mockRepository.findById(any())).thenReturn(optionalAccount);
         Mockito.when(mockRepository.findByBrokerAndNumber(anyString(), anyString())).thenReturn(optionalAccount);
 
-        UpdatingResult result = accountService.updateAccount("f21c831f-9807-4de5-88c7-61cfe33e1c46", "БКС", "БКС", "01");
+        UpdatingResult result = accountService.updateAccount(UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c46"), "БКС", "БКС", "01");
 
         Assertions.assertEquals(updatingResult.status(), result.status());
     }
@@ -103,7 +103,7 @@ class AccountServiceImplTest {
     void deleteAccount_whenAccountNotFound_thenReturnNull() {
         Mockito.when(mockRepository.existsById(any())).thenReturn(false);
 
-        UUID uuid = accountService.deleteAccount("f21c831f-9807-4de5-88c7-61cfe33e1c90");
+        UUID uuid = accountService.deleteAccount(UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c90"));
 
         Assertions.assertNull(uuid);
     }
@@ -113,7 +113,7 @@ class AccountServiceImplTest {
     void deleteAccount_whenAccountIsFound_thenReturn() {
         Mockito.when(mockRepository.existsById(any())).thenReturn(true);
 
-        accountService.deleteAccount("f21c831f-9807-4de5-88c7-61cfe33e1c90");
+        accountService.deleteAccount(UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c90"));
         verify(mockRepository, times(1)).deleteById(UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c90"));
     }
 
