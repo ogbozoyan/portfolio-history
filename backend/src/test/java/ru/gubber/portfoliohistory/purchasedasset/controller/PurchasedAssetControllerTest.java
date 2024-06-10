@@ -82,7 +82,7 @@ class PurchasedAssetControllerTest {
     void getPurchasedAssetsList_whenIdIsInvalid_thenReturnError() {
         List<FieldValidationError> response = new ArrayList<>();
         response.add(new FieldValidationError("id","Поле не может быть пустым"));
-        ValidationError responseError = new ValidationError(ResponseStatus.ERROR, "Не правильный запрос. Не правильный формат UUID.", response);
+        ValidationError responseError = new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", response);
         ValidationError result = (ValidationError) purchasedAssetController.getPurchasedAssetsList(new RequestAccountIdDto("невалидная строка"));
         Assertions.assertEquals(responseError.getErrorMessage(), result.getErrorMessage());
     }

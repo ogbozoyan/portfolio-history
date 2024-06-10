@@ -35,15 +35,11 @@ public class PurchasedAssetController {
     public BaseResponse getPurchasedAssetsList(@RequestBody RequestAccountIdDto dto) {
         log.info("Получен запрос на предоставление списка всех активов.");
         List<FieldValidationError> invalidField = new ArrayList<>();
-        invalidField.add(ValidationUtils.validateStringField(dto.id(), "id"));
+        invalidField.add(ValidationUtils.validateUUID(dto.id(), "id"));
         List<FieldValidationError> validationErrors = invalidField.stream().filter(Objects::nonNull).toList();
         if (!validationErrors.isEmpty()) {
             log.info("Ошибка валидации. Не правильный запрос");
             return new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", validationErrors);
-        }
-        if (!ValidationUtils.validateUUID(dto.id())) {
-            log.info("Ошибка валидации. Не правильный формат UUID");
-            return new ValidationError(ResponseStatus.ERROR, "Не правильный запрос. Не правильный формат UUID.", validationErrors);
         }
         List<PurchasedAssetFullDto> dtos = purchasedAssetService.getPurchasedAssetsList(UUID.fromString(dto.id())).stream()
                 .map(PurchasedAssetMapper::toPurchasedAssetFullDto)

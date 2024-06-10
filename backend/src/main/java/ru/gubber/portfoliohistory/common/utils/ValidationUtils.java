@@ -20,9 +20,13 @@ public class ValidationUtils {
         }
     }
 
-    public static boolean validateUUID(String uuid) {
+    public static FieldValidationError validateUUID(String uuid, String name) {
         Pattern UUID_REGEX =
                 Pattern.compile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
-        return UUID_REGEX.matcher(uuid).matches();
+        if (!UUID_REGEX.matcher(uuid).matches()) {
+            return new FieldValidationError(name, "Не правильный формат UUID.");
+        } else {
+            return null;
+        }
     }
 }
