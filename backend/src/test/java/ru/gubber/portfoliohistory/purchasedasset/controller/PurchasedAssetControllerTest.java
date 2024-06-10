@@ -68,16 +68,6 @@ class PurchasedAssetControllerTest {
     }
 
     @Test
-    @DisplayName("При получении информации об активе со значением - idDto.isEmpty- возвращается ошибка валидации")
-    void getPurchasedAssetsList_whenIdDtoIsEmpty_thenReturnDtoList() {
-        List<FieldValidationError> response = new ArrayList<>();
-        response.add(new FieldValidationError("id","Поле не может быть пустым"));
-        ValidationError responseError = new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", response);
-        ValidationError result = (ValidationError) purchasedAssetController.getPurchasedAssetsList(new RequestAccountIdDto(""));
-        Assertions.assertEquals(responseError.getErrorMessage(), result.getErrorMessage());
-    }
-
-    @Test
     @DisplayName("При невалидном значении uuid - возвращается ошибка валидации")
     void getPurchasedAssetsList_whenIdIsInvalid_thenReturnError() {
         List<FieldValidationError> response = new ArrayList<>();

@@ -34,6 +34,13 @@ class ValidationUtilsTest {
     }
 
     @Test
+    @DisplayName("При невалидном uuid - пустой строке - возвращается ошибка")
+    void validateUuidField_whenUuidFieldIsEmptyString_thenReturnFalse() {
+        String invalid = " ";
+        Assertions.assertNotNull(ValidationUtils.validateUuidField(invalid, "id"));
+    }
+
+    @Test
     @DisplayName("При валидном uuid возвращается null")
     void validateUuidField_whenUuidFieldIsValid_thenReturnNull() {
         String valid = "b1acc051-ea56-4ffc-a249-67010f8dd131";

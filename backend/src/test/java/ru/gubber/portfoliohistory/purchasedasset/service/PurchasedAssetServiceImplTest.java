@@ -127,7 +127,7 @@ class PurchasedAssetServiceImplTest {
         List<PurchasedAsset> purchasedAssets = new ArrayList<>();
         purchasedAssets.add(validAsset1);
         purchasedAssets.add(validAsset2);
-        Mockito.when(mockRepository.findAllByUUID(accountUuid)).thenReturn(purchasedAssets);
+        Mockito.when(mockRepository.findByAccountId(accountUuid)).thenReturn(purchasedAssets);
 
         List<PurchasedAsset> assetsResult = purchasedAssetService.getPurchasedAssetsList(accountUuid);
 
@@ -138,7 +138,7 @@ class PurchasedAssetServiceImplTest {
     @DisplayName("Успешное получение списка активов длиной 0")
     void getPurchasedAssetsList_whenPurchasedAssetsNotFound_thenReturnEmptyList() {
         List<PurchasedAsset> purchasedAssets = new ArrayList<>();
-        Mockito.when(mockRepository.findAllByUUID(any())).thenReturn(purchasedAssets);
+        Mockito.when(mockRepository.findByAccountId(any())).thenReturn(purchasedAssets);
 
         List<PurchasedAsset> assetsResult = purchasedAssetService.getPurchasedAssetsList(accountUuid2);
 
