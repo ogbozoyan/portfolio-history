@@ -13,6 +13,7 @@ import ru.gubber.portfoliohistory.account.model.Account;
 import ru.gubber.portfoliohistory.account.service.AccountService;
 import ru.gubber.portfoliohistory.account.service.UpdateStatus;
 import ru.gubber.portfoliohistory.account.service.UpdatingResult;
+import ru.gubber.portfoliohistory.common.dto.RequestAccountIdDto;
 import ru.gubber.portfoliohistory.common.dto.ResponseId;
 import ru.gubber.portfoliohistory.common.dto.ResponseStatus;
 import ru.gubber.portfoliohistory.common.dto.SuccessResponseDto;
@@ -170,7 +171,7 @@ class AccountControllerTest {
 
         Mockito.when(mockAccountService.deleteAccount(uuid3.toString())).thenReturn(uuid3);
 
-        accountController.deleteAccount(new IdIncomeAccountDto(uuid3.toString()));
+        accountController.deleteAccount(new RequestAccountIdDto(uuid3.toString()));
 
         verify(mockAccountService).deleteAccount(uuid3.toString());
     }
@@ -181,7 +182,7 @@ class AccountControllerTest {
         List<FieldValidationError> response = new ArrayList<>();
         response.add(new FieldValidationError("id","Поле не может быть пустым"));
         ValidationError responseError = new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", response);
-        ValidationError result = (ValidationError) accountController.deleteAccount(new IdIncomeAccountDto(""));
+        ValidationError result = (ValidationError) accountController.deleteAccount(new RequestAccountIdDto(""));
         Assertions.assertEquals(responseError.getErrorMessage(), result.getErrorMessage());
     }
 
@@ -191,7 +192,7 @@ class AccountControllerTest {
         Mockito.when(mockAccountService.deleteAccount(anyString())).thenReturn(null);
         ValidationError validationError = new ValidationError(ResponseStatus.WARN,
                 String.format("Нет счёта с идентификатором %s", "f21c831f-9807-4de5-88c7-61cfe33e1c50"), null);
-        ValidationError result = (ValidationError) accountController.deleteAccount(new IdIncomeAccountDto("f21c831f-9807-4de5-88c7-61cfe33e1c50"));
+        ValidationError result = (ValidationError) accountController.deleteAccount(new RequestAccountIdDto("f21c831f-9807-4de5-88c7-61cfe33e1c50"));
         Assertions.assertEquals(validationError.getErrorMessage(), result.getErrorMessage());
     }
 
@@ -227,7 +228,7 @@ class AccountControllerTest {
     void getAccountsInfo_thenReturnDto() {
         Mockito.when(mockAccountService.getAccountsInfo(anyString())).thenReturn(validAccount1);
 
-        SuccessResponseDto<AccountDto> accountsInfo = (SuccessResponseDto<AccountDto>)accountController.getAccountsInfo(new IdIncomeAccountDto(validAccount1.getId().toString()));
+        SuccessResponseDto<AccountDto> accountsInfo = (SuccessResponseDto<AccountDto>)accountController.getAccountsInfo(new RequestAccountIdDto(validAccount1.getId().toString()));
         AccountDto response = (AccountDto) accountsInfo.getResponse();
 
         Assertions.assertAll(
@@ -246,7 +247,7 @@ class AccountControllerTest {
         List<FieldValidationError> response = new ArrayList<>();
         response.add(new FieldValidationError("id","Поле не может быть пустым"));
         ValidationError responseError = new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", response);
-        ValidationError result = (ValidationError) accountController.getAccountsInfo(new IdIncomeAccountDto(""));
+        ValidationError result = (ValidationError) accountController.getAccountsInfo(new RequestAccountIdDto(""));
         Assertions.assertEquals(responseError.getErrorMessage(), result.getErrorMessage());
     }
 
@@ -256,7 +257,7 @@ class AccountControllerTest {
         Mockito.when(mockAccountService.getAccountsInfo(anyString())).thenReturn(null);
         ValidationError validationError = new ValidationError(ResponseStatus.WARN,
                 String.format("Нет счёта с идентификатором %s", "f21c831f-9807-4de5-88c7-61cfe33e1c50"), null);
-        ValidationError result = (ValidationError) accountController.getAccountsInfo(new IdIncomeAccountDto("f21c831f-9807-4de5-88c7-61cfe33e1c50"));
+        ValidationError result = (ValidationError) accountController.getAccountsInfo(new RequestAccountIdDto("f21c831f-9807-4de5-88c7-61cfe33e1c50"));
         Assertions.assertEquals(validationError.getErrorMessage(), result.getErrorMessage());
     }
 }

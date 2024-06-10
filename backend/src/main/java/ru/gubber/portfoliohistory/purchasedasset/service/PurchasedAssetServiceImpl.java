@@ -48,7 +48,7 @@ public class PurchasedAssetServiceImpl implements PurchasedAssetService {
     }
 
     @Override
-    public List<PurchasedAsset> getPurchasedAssetsList() {
-        return repository.findAll();
+    public List<PurchasedAsset> getPurchasedAssetsList(UUID accountId) {
+        return repository.findAllByUUID(accountId);
     }
 }

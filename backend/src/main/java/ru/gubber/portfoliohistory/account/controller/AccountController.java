@@ -9,10 +9,7 @@ import ru.gubber.portfoliohistory.account.dto.*;
 import ru.gubber.portfoliohistory.account.model.Account;
 import ru.gubber.portfoliohistory.account.service.AccountService;
 import ru.gubber.portfoliohistory.account.service.UpdatingResult;
-import ru.gubber.portfoliohistory.common.dto.BaseResponse;
-import ru.gubber.portfoliohistory.common.dto.ResponseId;
-import ru.gubber.portfoliohistory.common.dto.ResponseStatus;
-import ru.gubber.portfoliohistory.common.dto.SuccessResponseDto;
+import ru.gubber.portfoliohistory.common.dto.*;
 import ru.gubber.portfoliohistory.common.utils.FieldValidationError;
 import ru.gubber.portfoliohistory.common.utils.ValidationUtils;
 
@@ -91,7 +88,7 @@ public class AccountController {
     }
 
     @PostMapping("/api/v1/delete-account")
-    public BaseResponse deleteAccount(@RequestBody IdIncomeAccountDto dto) {
+    public BaseResponse deleteAccount(@RequestBody RequestAccountIdDto dto) {
         log.info("Получен запрос на удаление счета {}.", dto.id());
         List<FieldValidationError> invalidField = new ArrayList<>();
         invalidField.add(ValidationUtils.validateStringField(dto.id(), "id"));
@@ -120,7 +117,7 @@ public class AccountController {
     }
 
     @PostMapping("/api/v1/get-accounts-info")
-    public BaseResponse getAccountsInfo(@RequestBody IdIncomeAccountDto dto) {
+    public BaseResponse getAccountsInfo(@RequestBody RequestAccountIdDto dto) {
         log.info("Получен запрос на предоставление информации о счете с Id {}", dto.id());
         List<FieldValidationError> invalidField = new ArrayList<>();
         invalidField.add(ValidationUtils.validateStringField(dto.id(), "id"));

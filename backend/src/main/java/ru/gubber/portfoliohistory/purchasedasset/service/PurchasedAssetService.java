@@ -11,5 +11,5 @@ public interface PurchasedAssetService {
 
     boolean sellAsset(UUID accountId, String code, Double amount);
 
-    List<PurchasedAsset> getPurchasedAssetsList();
+    List<PurchasedAsset> getPurchasedAssetsList(UUID accountId);
 }
