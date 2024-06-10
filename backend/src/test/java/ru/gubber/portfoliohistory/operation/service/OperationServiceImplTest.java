@@ -39,7 +39,7 @@ class OperationServiceImplTest {
         Mockito.when(mockRepository.save(any())).thenAnswer(invocationOnMock ->
                 invocationOnMock.getArgument(0));
 
-        UUID resultUuid = operationService.replenishAccount(accoundUUID.toString(), amount);
+        UUID resultUuid = operationService.replenishAccount(accoundUUID, amount);
         verify(mockAccountService).changeCurrentBalance(accoundUUID, amount);
         verify(mockRepository).save(operationArgumentCaptor.capture());
         verify(mockPurchasedAssetService).purchaseAsset(accoundUUID, ASSET_CODE, amount);
@@ -52,7 +52,7 @@ class OperationServiceImplTest {
         double amount = 105.3;
         Mockito.when(mockAccountService.accountExists(any())).thenReturn(false);
 
-        UUID resultUuid = operationService.replenishAccount(accoundUUID.toString(), amount);
+        UUID resultUuid = operationService.replenishAccount(accoundUUID, amount);
         Assertions.assertNull(resultUuid);
     }
 

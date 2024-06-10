@@ -59,16 +59,16 @@ class OperationControllerTest {
     @Test
     @DisplayName("Вызывается сервис")
     void replenishAccount_thenUseService() {
-        Mockito.when(mockOperationService.replenishAccount(anyString(), any())).thenReturn(operationUUID);
+        Mockito.when(mockOperationService.replenishAccount(any(), any())).thenReturn(operationUUID);
 
         operationController.replenishAccount(new IncomeOperationDto(accoundUUID.toString(), amount));
-        verify(mockOperationService).replenishAccount(anyString(), any());
+        verify(mockOperationService).replenishAccount(any(), any());
     }
 
     @Test
     @DisplayName("При корректных значениях dto возвращается ответ с корректным uuid")
     void replenishAccount_thenReturnUUID() {
-        Mockito.when(mockOperationService.replenishAccount(anyString(), any())).thenReturn(operationUUID);
+        Mockito.when(mockOperationService.replenishAccount(any(), any())).thenReturn(operationUUID);
 
         SuccessResponseDto<ResponseId> outcomeOperationDto = (SuccessResponseDto<ResponseId>) operationController.replenishAccount(new IncomeOperationDto(accoundUUID.toString(), amount));
         ResponseId result = (ResponseId) outcomeOperationDto.getResponse();
@@ -79,7 +79,7 @@ class OperationControllerTest {
     @Test
     @DisplayName("При условии что из сервис возвращается ответ null - тогда вернуть Error ")
     void replenishAccount_whenUUIDisNull_thenReturnError() {
-        Mockito.when(mockOperationService.replenishAccount(anyString(), any())).thenReturn(null);
+        Mockito.when(mockOperationService.replenishAccount(any(), any())).thenReturn(null);
         ValidationError validationError = new ValidationError(ResponseStatus.WARN,
                 String.format("На счет %s не удалось добавить актив", accoundUUID.toString()), null);
         ValidationError resultError = (ValidationError) operationController.replenishAccount(new IncomeOperationDto(accoundUUID.toString(), amount));

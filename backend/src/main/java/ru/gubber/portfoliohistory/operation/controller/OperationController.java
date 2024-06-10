@@ -42,7 +42,7 @@ public class OperationController {
             log.info("Ошибка валидации - не правильный запрос.");
             return new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", validationErrors);
         }
-        UUID uuid = operationService.replenishAccount(dto.accountId(), dto.amount());
+        UUID uuid = operationService.replenishAccount(UUID.fromString(dto.accountId()), dto.amount());
         if (uuid != null) {
             log.info("Запрос успешно выполнен.");
             return new SuccessResponseDto<>(new ResponseId(uuid));
