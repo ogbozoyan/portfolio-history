@@ -35,7 +35,7 @@ public class OperationController {
     public BaseResponse replenishAccount(@RequestBody IncomeOperationDto dto) {
         log.info("Получен запрос на пополнение счета {}.", dto.accountId());
         List<FieldValidationError> invalidField = new ArrayList<>();
-        invalidField.add(ValidationUtils.validateUUID(dto.accountId(), "accountId"));
+        invalidField.add(ValidationUtils.validateUuidField(dto.accountId(), "accountId"));
         invalidField.add(ValidationUtils.validateNumberField(dto.amount(), "amount"));
         List<FieldValidationError> validationErrors = invalidField.stream().filter(Objects::nonNull).toList();
         if (!validationErrors.isEmpty()) {
@@ -57,7 +57,7 @@ public class OperationController {
     public BaseResponse withdrawFromAccount(@RequestBody IncomeOperationDto dto) {
         log.info("Получен запрос на вывод средств со счета {}.", dto.accountId());
         List<FieldValidationError> invalidField = new ArrayList<>();
-        invalidField.add(ValidationUtils.validateUUID(dto.accountId(), "accountId"));
+        invalidField.add(ValidationUtils.validateUuidField(dto.accountId(), "accountId"));
         invalidField.add(ValidationUtils.validateNumberField(dto.amount(), "amount"));
         List<FieldValidationError> validationErrors = invalidField.stream().filter(Objects::nonNull).toList();
         if (!validationErrors.isEmpty()) {
