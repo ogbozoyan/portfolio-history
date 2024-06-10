@@ -1,4 +1,4 @@
-package ru.gubber.portfoliohistory.account.dto;
+package ru.gubber.portfoliohistory.common.dto;
 
 import java.util.UUID;
 

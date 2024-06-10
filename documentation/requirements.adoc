@@ -185,12 +185,45 @@ POST /api/v1/withdraw-from-account
 ----
 {
     "status": "ERROR",
-    "errorMessage": "На счёте \"<НАЗВАНИЕ_СЧЕТА>\" не достаточно средств",
+    "errorMessage": "На счёте \"<НАЗВАНИЕ_СЧЕТА>\" не достаточно средств"
 }
 ----
 
 
 === 2.3 Видеть все активы счёта
+Система должна давать возможность видеть все активы указанного счёта.
+Список активов?
+
+[source, rest]
+----
+POST /api/v1/get-purchased-assets-list
+----
+[source, rest]
+----
+Content-Type: application/json
+{
+    status: "SUCCESS",
+    response: {
+        list: [
+            {
+                code: <код актива> ,
+                assetType: <тип актива>,
+                amount: <количество>,
+                purchasePrice: <стоимость покупки>,
+                currentPrice: <текущая стоимость>
+            },
+            {
+                code: <код актива> ,
+                assetType: <тип актива>,
+                amount: <количество>,
+                purchasePrice: <стоимость покупки>,
+                currentPrice: <текущая стоимость>
+            },
+            ...
+        ]
+    }
+}
+----
 
 === 2.4 Приобретение, добавление активов: руб, валюта, драгМет, акции, облигации
 
@@ -427,11 +460,11 @@ POST /api/v1/get-accounts-list
 
 [source, rest]
 ----
-Content-Type: appliction/json
+Content-Type: application/json
 
 {
     status: "SUCCESS",
-    responce: {
+    response: {
         list: [
             {
                 id: <идентификатор счёта>,

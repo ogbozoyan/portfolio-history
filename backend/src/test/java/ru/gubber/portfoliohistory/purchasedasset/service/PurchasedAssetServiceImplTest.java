@@ -10,6 +10,8 @@ import ru.gubber.portfoliohistory.purchasedasset.model.AssetType;
 import ru.gubber.portfoliohistory.purchasedasset.model.PurchasedAsset;
 import ru.gubber.portfoliohistory.purchasedasset.repository.PurchasedAssetRepository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,6 +29,9 @@ class PurchasedAssetServiceImplTest {
     UUID uuid = UUID.fromString("f99b9e41-4753-43ad-89cd-1874c3a35c89");
     UUID accountUuid = UUID.fromString("f99b9e41-4753-43ad-89cd-1874c3a35c89");
     PurchasedAsset validAsset1 = new PurchasedAsset(uuid, "RUR", AssetType.CURRENCY, 100.0, 1.0, 1.0, accountUuid);
+    UUID uuid2 = UUID.fromString("f99b9e41-4753-43ad-89cd-1874c3a35c33");
+    UUID accountUuid2 = UUID.fromString("f99b9e41-4753-43ad-89cd-1874c3a35c32");
+    PurchasedAsset validAsset2 = new PurchasedAsset(uuid2, "RUR", AssetType.CURRENCY, 100.0, 1.0, 1.0, accountUuid);
 
     @Test
     @DisplayName("Успешное сохранение приобретенного актива если его ещё не было")
@@ -114,6 +119,29 @@ class PurchasedAssetServiceImplTest {
 
         purchasedAssetService.sellAsset(accountUuid2, "RUR", 5.0);
         verify(mockRepository).findByAccountIdAndCode(any(), anyString());
+    }
 
+    @Test
+    @DisplayName("Успешное получение списка активов длиной 2")
+    void getPurchasedAssetsList_thenReturnList() {
+        List<PurchasedAsset> purchasedAssets = new ArrayList<>();
+        purchasedAssets.add(validAsset1);
+        purchasedAssets.add(validAsset2);
+        Mockito.when(mockRepository.findByAccountId(accountUuid)).thenReturn(purchasedAssets);
+
+        List<PurchasedAsset> assetsResult = purchasedAssetService.getPurchasedAssetsList(accountUuid);
+
+        Assertions.assertEquals(purchasedAssets.size(), assetsResult.size());
+    }
+
+    @Test
+    @DisplayName("Успешное получение списка активов длиной 0")
+    void getPurchasedAssetsList_whenPurchasedAssetsNotFound_thenReturnEmptyList() {
+        List<PurchasedAsset> purchasedAssets = new ArrayList<>();
+        Mockito.when(mockRepository.findByAccountId(any())).thenReturn(purchasedAssets);
+
+        List<PurchasedAsset> assetsResult = purchasedAssetService.getPurchasedAssetsList(accountUuid2);
+
+        Assertions.assertEquals(0, assetsResult.size());
     }
 }

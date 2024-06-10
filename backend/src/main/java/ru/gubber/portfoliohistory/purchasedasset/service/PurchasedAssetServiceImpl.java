@@ -5,6 +5,7 @@ import ru.gubber.portfoliohistory.purchasedasset.model.AssetType;
 import ru.gubber.portfoliohistory.purchasedasset.model.PurchasedAsset;
 import ru.gubber.portfoliohistory.purchasedasset.repository.PurchasedAssetRepository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -44,5 +45,10 @@ public class PurchasedAssetServiceImpl implements PurchasedAssetService {
         }
         repository.save(asset);
         return true;
+    }
+
+    @Override
+    public List<PurchasedAsset> getPurchasedAssetsList(UUID accountId) {
+        return repository.findByAccountId(accountId);
     }
 }

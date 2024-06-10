@@ -7,11 +7,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.gubber.portfoliohistory.account.controller.AccountController;
 import ru.gubber.portfoliohistory.account.dto.*;
+import ru.gubber.portfoliohistory.common.dto.BaseResponse;
+import ru.gubber.portfoliohistory.common.dto.ResponseId;
+import ru.gubber.portfoliohistory.common.dto.ResponseStatus;
+import ru.gubber.portfoliohistory.common.dto.SuccessResponseDto;
 import ru.gubber.portfoliohistory.common.utils.FieldValidationError;
 import ru.gubber.portfoliohistory.common.utils.ValidationUtils;
-import ru.gubber.portfoliohistory.operation.dto.OperationDto;
-import ru.gubber.portfoliohistory.operation.dto.OutcomeOperationDto;
-import ru.gubber.portfoliohistory.operation.dto.ResultOperationId;
+import ru.gubber.portfoliohistory.operation.dto.IncomeOperationDto;
 import ru.gubber.portfoliohistory.operation.service.OperationService;
 import ru.gubber.portfoliohistory.operation.service.WithdrawalResult;
 
@@ -30,20 +32,20 @@ public class OperationController {
     }
 
     @PostMapping("/api/v1/replenish-account")
-    public BaseResponse replenishAccount(@RequestBody OperationDto dto) {
+    public BaseResponse replenishAccount(@RequestBody IncomeOperationDto dto) {
         log.info("Получен запрос на пополнение счета {}.", dto.accountId());
         List<FieldValidationError> invalidField = new ArrayList<>();
-        invalidField.add(ValidationUtils.validateStringField(dto.accountId(), "accountId"));
+        invalidField.add(ValidationUtils.validateUuidField(dto.accountId(), "accountId"));
         invalidField.add(ValidationUtils.validateNumberField(dto.amount(), "amount"));
         List<FieldValidationError> validationErrors = invalidField.stream().filter(Objects::nonNull).toList();
         if (!validationErrors.isEmpty()) {
             log.info("Ошибка валидации - не правильный запрос.");
             return new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", validationErrors);
         }
-        UUID uuid = operationService.replenishAccount(dto.accountId(), dto.amount());
+        UUID uuid = operationService.replenishAccount(UUID.fromString(dto.accountId()), dto.amount());
         if (uuid != null) {
             log.info("Запрос успешно выполнен.");
-            return new OutcomeOperationDto(new ResultOperationId(uuid));
+            return new SuccessResponseDto<>(new ResponseId(uuid));
         } else {
             log.info("Не удалось выполнить запрос на добавление актива на счет {}", dto.accountId());
             return new ValidationError(ResponseStatus.WARN,
@@ -52,10 +54,10 @@ public class OperationController {
     }
 
     @PostMapping("/api/v1/withdraw-from-account")
-    public BaseResponse withdrawFromAccount(@RequestBody OperationDto dto) {
+    public BaseResponse withdrawFromAccount(@RequestBody IncomeOperationDto dto) {
         log.info("Получен запрос на вывод средств со счета {}.", dto.accountId());
         List<FieldValidationError> invalidField = new ArrayList<>();
-        invalidField.add(ValidationUtils.validateStringField(dto.accountId(), "accountId"));
+        invalidField.add(ValidationUtils.validateUuidField(dto.accountId(), "accountId"));
         invalidField.add(ValidationUtils.validateNumberField(dto.amount(), "amount"));
         List<FieldValidationError> validationErrors = invalidField.stream().filter(Objects::nonNull).toList();
         if (!validationErrors.isEmpty()) {
@@ -76,7 +78,7 @@ public class OperationController {
             }
             default -> {
                 log.info("Запрос на вывод средств успешно выполнен.");
-                return new OutcomeOperationDto(new ResultOperationId(withdrawalResult.uuid()));
+                return new SuccessResponseDto<>(new ResponseId(withdrawalResult.uuid()));
             }
         }
     }

@@ -8,12 +8,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.gubber.portfoliohistory.account.dto.ResponseStatus;
+import ru.gubber.portfoliohistory.common.dto.ResponseId;
+import ru.gubber.portfoliohistory.common.dto.ResponseStatus;
 import ru.gubber.portfoliohistory.account.dto.ValidationError;
+import ru.gubber.portfoliohistory.common.dto.SuccessResponseDto;
 import ru.gubber.portfoliohistory.common.utils.FieldValidationError;
-import ru.gubber.portfoliohistory.operation.dto.OperationDto;
-import ru.gubber.portfoliohistory.operation.dto.OutcomeOperationDto;
-import ru.gubber.portfoliohistory.operation.dto.ResultOperationId;
+import ru.gubber.portfoliohistory.operation.dto.IncomeOperationDto;
 import ru.gubber.portfoliohistory.operation.service.OperationService;
 import ru.gubber.portfoliohistory.operation.service.OperationStatus;
 import ru.gubber.portfoliohistory.operation.service.WithdrawalResult;
@@ -42,7 +42,7 @@ class OperationControllerTest {
         List<FieldValidationError> response = new ArrayList<>();
         response.add(new FieldValidationError("accountId","Поле не может быть пустым"));
         ValidationError responseError = new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", response);
-        ValidationError result = (ValidationError) operationController.replenishAccount(new OperationDto("", amount));
+        ValidationError result = (ValidationError) operationController.replenishAccount(new IncomeOperationDto("", amount));
         Assertions.assertEquals(responseError.getErrorMessage(), result.getErrorMessage());
     }
 
@@ -52,26 +52,26 @@ class OperationControllerTest {
         List<FieldValidationError> response = new ArrayList<>();
         response.add(new FieldValidationError("amount","Поле не может быть пустым"));
         ValidationError responseError = new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", response);
-        ValidationError result = (ValidationError) operationController.replenishAccount(new OperationDto(accoundUUID.toString(), null));
+        ValidationError result = (ValidationError) operationController.replenishAccount(new IncomeOperationDto(accoundUUID.toString(), null));
         Assertions.assertEquals(responseError.getErrorMessage(), result.getErrorMessage());
     }
 
     @Test
     @DisplayName("Вызывается сервис")
     void replenishAccount_thenUseService() {
-        Mockito.when(mockOperationService.replenishAccount(anyString(), any())).thenReturn(operationUUID);
+        Mockito.when(mockOperationService.replenishAccount(any(), any())).thenReturn(operationUUID);
 
-        operationController.replenishAccount(new OperationDto(accoundUUID.toString(), amount));
-        verify(mockOperationService).replenishAccount(anyString(), any());
+        operationController.replenishAccount(new IncomeOperationDto(accoundUUID.toString(), amount));
+        verify(mockOperationService).replenishAccount(any(), any());
     }
 
     @Test
     @DisplayName("При корректных значениях dto возвращается ответ с корректным uuid")
     void replenishAccount_thenReturnUUID() {
-        Mockito.when(mockOperationService.replenishAccount(anyString(), any())).thenReturn(operationUUID);
+        Mockito.when(mockOperationService.replenishAccount(any(), any())).thenReturn(operationUUID);
 
-        OutcomeOperationDto outcomeOperationDto = (OutcomeOperationDto) operationController.replenishAccount(new OperationDto(accoundUUID.toString(), amount));
-        ResultOperationId result = (ResultOperationId) outcomeOperationDto.getResponse();
+        SuccessResponseDto<ResponseId> outcomeOperationDto = (SuccessResponseDto<ResponseId>) operationController.replenishAccount(new IncomeOperationDto(accoundUUID.toString(), amount));
+        ResponseId result = (ResponseId) outcomeOperationDto.getResponse();
 
         Assertions.assertEquals(operationUUID, result.id());
     }
@@ -79,10 +79,10 @@ class OperationControllerTest {
     @Test
     @DisplayName("При условии что из сервис возвращается ответ null - тогда вернуть Error ")
     void replenishAccount_whenUUIDisNull_thenReturnError() {
-        Mockito.when(mockOperationService.replenishAccount(anyString(), any())).thenReturn(null);
+        Mockito.when(mockOperationService.replenishAccount(any(), any())).thenReturn(null);
         ValidationError validationError = new ValidationError(ResponseStatus.WARN,
                 String.format("На счет %s не удалось добавить актив", accoundUUID.toString()), null);
-        ValidationError resultError = (ValidationError) operationController.replenishAccount(new OperationDto(accoundUUID.toString(), amount));
+        ValidationError resultError = (ValidationError) operationController.replenishAccount(new IncomeOperationDto(accoundUUID.toString(), amount));
         Assertions.assertEquals(validationError.getErrorMessage(), resultError.getErrorMessage());
     }
 
@@ -92,7 +92,7 @@ class OperationControllerTest {
         List<FieldValidationError> response = new ArrayList<>();
         response.add(new FieldValidationError("accountId","Поле не может быть пустым"));
         ValidationError responseError = new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", response);
-        ValidationError result = (ValidationError) operationController.withdrawFromAccount(new OperationDto("", amount));
+        ValidationError result = (ValidationError) operationController.withdrawFromAccount(new IncomeOperationDto("", amount));
         Assertions.assertEquals(responseError.getErrorMessage(), result.getErrorMessage());
     }
 
@@ -102,7 +102,7 @@ class OperationControllerTest {
         List<FieldValidationError> response = new ArrayList<>();
         response.add(new FieldValidationError("amount","Поле не может быть пустым"));
         ValidationError responseError = new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", response);
-        ValidationError result = (ValidationError) operationController.withdrawFromAccount(new OperationDto(accoundUUID.toString(), null));
+        ValidationError result = (ValidationError) operationController.withdrawFromAccount(new IncomeOperationDto(accoundUUID.toString(), null));
         Assertions.assertEquals(responseError.getErrorMessage(), result.getErrorMessage());
     }
 
@@ -112,7 +112,7 @@ class OperationControllerTest {
         WithdrawalResult withdrawalResult = new WithdrawalResult(operationUUID, OperationStatus.SUCCESSFULLY);
         Mockito.when(mockOperationService.withdrawFromAccount(anyString(), any())).thenReturn(withdrawalResult);
 
-        operationController.withdrawFromAccount(new OperationDto(accoundUUID.toString(), amount));
+        operationController.withdrawFromAccount(new IncomeOperationDto(accoundUUID.toString(), amount));
         verify(mockOperationService).withdrawFromAccount(accoundUUID.toString(), amount);
     }
 
@@ -123,8 +123,8 @@ class OperationControllerTest {
 
         Mockito.when(mockOperationService.withdrawFromAccount(anyString(), any())).thenReturn(withdrawalResult);
 
-        OutcomeOperationDto outcomeOperationDto = (OutcomeOperationDto) operationController.withdrawFromAccount(new OperationDto(accoundUUID.toString(), amount));
-        ResultOperationId result = (ResultOperationId) outcomeOperationDto.getResponse();
+        SuccessResponseDto<ResponseId> outcomeOperationDto = (SuccessResponseDto<ResponseId>) operationController.withdrawFromAccount(new IncomeOperationDto(accoundUUID.toString(), amount));
+        ResponseId result = (ResponseId) outcomeOperationDto.getResponse();
 
         Assertions.assertEquals(operationUUID, result.id());
     }
@@ -136,7 +136,7 @@ class OperationControllerTest {
         Mockito.when(mockOperationService.withdrawFromAccount(anyString(), any())).thenReturn(withdrawalResult);
         ValidationError validationError = new ValidationError(ResponseStatus.ERROR,
                 String.format("Нет счёта с идентификатором %s", accoundUUID.toString()), null);
-        ValidationError resultError = (ValidationError) operationController.withdrawFromAccount(new OperationDto(accoundUUID.toString(), amount));
+        ValidationError resultError = (ValidationError) operationController.withdrawFromAccount(new IncomeOperationDto(accoundUUID.toString(), amount));
         Assertions.assertEquals(validationError.getErrorMessage(), resultError.getErrorMessage());
     }
 
@@ -147,7 +147,7 @@ class OperationControllerTest {
         Mockito.when(mockOperationService.withdrawFromAccount(anyString(), any())).thenReturn(withdrawalResult);
         ValidationError validationError = new ValidationError(ResponseStatus.ERROR,
                 String.format("На счете не достаточно средств", accoundUUID.toString()), null);
-        ValidationError resultError = (ValidationError) operationController.withdrawFromAccount(new OperationDto(accoundUUID.toString(), amount));
+        ValidationError resultError = (ValidationError) operationController.withdrawFromAccount(new IncomeOperationDto(accoundUUID.toString(), amount));
         Assertions.assertEquals(validationError.getErrorMessage(), resultError.getErrorMessage());
     }
 }

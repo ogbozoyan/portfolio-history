@@ -1,5 +1,7 @@
 package ru.gubber.portfoliohistory.account.dto;
 
+import ru.gubber.portfoliohistory.common.dto.BaseResponse;
+import ru.gubber.portfoliohistory.common.dto.ResponseStatus;
 import ru.gubber.portfoliohistory.common.utils.FieldValidationError;
 
 import java.util.List;

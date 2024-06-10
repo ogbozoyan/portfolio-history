@@ -13,12 +13,17 @@ import ru.gubber.portfoliohistory.account.model.Account;
 import ru.gubber.portfoliohistory.account.service.AccountService;
 import ru.gubber.portfoliohistory.account.service.UpdateStatus;
 import ru.gubber.portfoliohistory.account.service.UpdatingResult;
+import ru.gubber.portfoliohistory.common.dto.RequestAccountIdDto;
+import ru.gubber.portfoliohistory.common.dto.ResponseId;
+import ru.gubber.portfoliohistory.common.dto.ResponseStatus;
+import ru.gubber.portfoliohistory.common.dto.SuccessResponseDto;
 import ru.gubber.portfoliohistory.common.utils.FieldValidationError;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 
@@ -32,7 +37,6 @@ class AccountControllerTest {
     private final UUID uuid2 = UUID.fromString("b1acc051-ea56-4ffc-a249-67010f8dd132");
     private final Account validAccount1 = new Account(uuid1, "БКС1", "БКС", "01", 0.0);
     private final Account validAccount2 = new Account(uuid2, "БКС2", "БКС", "02", 0.0);
-    private final AccountMapper mapper = new AccountMapper();
 
     @Test
     @DisplayName("Вызывается сервис")
@@ -54,7 +58,7 @@ class AccountControllerTest {
 
         Mockito.when(mockAccountService.createAccount("БКС3", "БКС", "03")).thenReturn(account3.getId());
 
-        IdOutcomeAccountDto responseResult = (IdOutcomeAccountDto) accountController.createAccount(new IncomeAccountDto("БКС3", "БКС", "03"));
+        SuccessResponseDto<ResponseId> responseResult = (SuccessResponseDto<ResponseId>) accountController.createAccount(new IncomeAccountDto("БКС3", "БКС", "03"));
         ResponseId responseId = (ResponseId)responseResult.getResponse();
         UUID resultUUID = responseId.id();
         Assertions.assertEquals(account3.getId(), resultUUID);
@@ -105,10 +109,10 @@ class AccountControllerTest {
     void updateAccount_thenUseService() {
         UUID uuid3 = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c47");
         UpdatingResult updatingResult = new UpdatingResult(uuid3, UpdateStatus.SUCCESSFULLY);
-        Mockito.when(mockAccountService.updateAccount(uuid3.toString(),"БКС3", "БКС", "03")).thenReturn(updatingResult);
+        Mockito.when(mockAccountService.updateAccount(uuid3,"БКС3", "БКС", "03")).thenReturn(updatingResult);
 
         accountController.updateAccount(new IncomeFullAccountDto("f21c831f-9807-4de5-88c7-61cfe33e1c47", "БКС3", "БКС", "03"));
-        verify(mockAccountService).updateAccount(uuid3.toString(),"БКС3", "БКС", "03");
+        verify(mockAccountService).updateAccount(uuid3,"БКС3", "БКС", "03");
     }
 
     @Test
@@ -122,14 +126,24 @@ class AccountControllerTest {
     }
 
     @Test
+    @DisplayName("При обновлении некорректных данных счета - idDto невалидно - возвращается ошибка валидации")
+    void updateAccount_whenIdDtoIsInvalid_thenReturnValidationError() {
+        List<FieldValidationError> response = new ArrayList<>();
+        response.add(new FieldValidationError("id","Поле не может быть пустым"));
+        ValidationError responseError = new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", response);
+        ValidationError result = (ValidationError) accountController.updateAccount(new IncomeFullAccountDto("невалидное", "БКС3", "БКС", "03"));
+        Assertions.assertEquals(responseError.getErrorMessage(), result.getErrorMessage());
+    }
+
+    @Test
     @DisplayName("При обновлении данных счета возвращается корректный UUID")
     void updateAccount_whenDtoIsValid_thenReturnUUID() {
         UUID uuid3 = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c47");
         UpdatingResult updatingResult = new UpdatingResult(uuid3, UpdateStatus.SUCCESSFULLY);
 
-        Mockito.when(mockAccountService.updateAccount(anyString(), anyString(), anyString(), anyString())).thenReturn(updatingResult);
+        Mockito.when(mockAccountService.updateAccount(any(), anyString(), anyString(), anyString())).thenReturn(updatingResult);
 
-        IdOutcomeAccountDto responseResult = (IdOutcomeAccountDto) accountController.updateAccount(new IncomeFullAccountDto(uuid3.toString(), "БКС3", "БКС", "03"));
+        SuccessResponseDto<ResponseId> responseResult = (SuccessResponseDto<ResponseId>) accountController.updateAccount(new IncomeFullAccountDto(uuid3.toString(), "БКС3", "БКС", "03"));
         ResponseId response = (ResponseId) responseResult.getResponse();
         UUID resultUUID = response.id();
 
@@ -141,7 +155,7 @@ class AccountControllerTest {
     void updateAccount_whenUUIDisNull_thenReturnError() {
         UUID uuid = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c50");
         UpdatingResult updatingResult = new UpdatingResult(uuid, UpdateStatus.ITEM_NOT_FOUND);
-        Mockito.when(mockAccountService.updateAccount(anyString(), anyString(), anyString(), anyString())).thenReturn(updatingResult);
+        Mockito.when(mockAccountService.updateAccount(any(), anyString(), anyString(), anyString())).thenReturn(updatingResult);
         ValidationError validationError = new ValidationError(ResponseStatus.WARN,
                 String.format("Нет счёта с идентификатором %s", "f21c831f-9807-4de5-88c7-61cfe33e1c50"), null);
         ValidationError result = (ValidationError) accountController.updateAccount(new IncomeFullAccountDto("f21c831f-9807-4de5-88c7-61cfe33e1c50", "БКС3", "БКС", "БКС3"));
@@ -154,7 +168,7 @@ class AccountControllerTest {
         UUID uuid3 = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c47");
         UpdatingResult updatingResult = new UpdatingResult(uuid3, UpdateStatus.UNSUCCESSFULLY);
 
-        Mockito.when(mockAccountService.updateAccount(anyString(), anyString(), anyString(), anyString())).thenReturn(updatingResult);
+        Mockito.when(mockAccountService.updateAccount(any(), anyString(), anyString(), anyString())).thenReturn(updatingResult);
         ValidationError validationError = new ValidationError(ResponseStatus.WARN,
                 String.format("В системе уже зарегистрирован счёт %s у брокера %s", "04", "БКС"), null);
         ValidationError result = (ValidationError) accountController.updateAccount(new IncomeFullAccountDto(uuid3.toString(), "a", "БКС", "04"));
@@ -166,11 +180,11 @@ class AccountControllerTest {
     void deleteAccount_thenUseService() {
         UUID uuid3 = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c47");
 
-        Mockito.when(mockAccountService.deleteAccount(uuid3.toString())).thenReturn(uuid3);
+        Mockito.when(mockAccountService.deleteAccount(uuid3)).thenReturn(uuid3);
 
-        accountController.deleteAccount(new IdIncomeAccountDto(uuid3.toString()));
+        accountController.deleteAccount(new RequestAccountIdDto(uuid3.toString()));
 
-        verify(mockAccountService).deleteAccount(uuid3.toString());
+        verify(mockAccountService).deleteAccount(uuid3);
     }
 
     @Test
@@ -179,17 +193,17 @@ class AccountControllerTest {
         List<FieldValidationError> response = new ArrayList<>();
         response.add(new FieldValidationError("id","Поле не может быть пустым"));
         ValidationError responseError = new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", response);
-        ValidationError result = (ValidationError) accountController.deleteAccount(new IdIncomeAccountDto(""));
+        ValidationError result = (ValidationError) accountController.deleteAccount(new RequestAccountIdDto(""));
         Assertions.assertEquals(responseError.getErrorMessage(), result.getErrorMessage());
     }
 
     @Test
     @DisplayName("При удалении счета при получении из сервиса значения null возвращается Error")
     void deleteAccount_whenUUIDisNull_thenReturnError() {
-        Mockito.when(mockAccountService.deleteAccount(anyString())).thenReturn(null);
+        Mockito.when(mockAccountService.deleteAccount(any())).thenReturn(null);
         ValidationError validationError = new ValidationError(ResponseStatus.WARN,
                 String.format("Нет счёта с идентификатором %s", "f21c831f-9807-4de5-88c7-61cfe33e1c50"), null);
-        ValidationError result = (ValidationError) accountController.deleteAccount(new IdIncomeAccountDto("f21c831f-9807-4de5-88c7-61cfe33e1c50"));
+        ValidationError result = (ValidationError) accountController.deleteAccount(new RequestAccountIdDto("f21c831f-9807-4de5-88c7-61cfe33e1c50"));
         Assertions.assertEquals(validationError.getErrorMessage(), result.getErrorMessage());
     }
 
@@ -212,9 +226,9 @@ class AccountControllerTest {
         accounts.add(validAccount1);
         accounts.add(validAccount2);
         Mockito.when(mockAccountService.getAccountsList()).thenReturn(accounts);
-        List<AccountDto> dtos = accounts.stream().map(mapper::toAccountDto).toList();
+        List<AccountDto> dtos = accounts.stream().map(AccountMapper::toAccountDto).toList();
 
-        OutcomeAccountDto response = (OutcomeAccountDto)accountController.getAccountsList();
+        SuccessResponseDto<List<AccountDto>> response = (SuccessResponseDto<List<AccountDto>>)accountController.getAccountsList();
         List<AccountDto> resultDtos = (List<AccountDto>) response.getResponse();
 
         Assertions.assertEquals(dtos.size(), resultDtos.size());
@@ -223,9 +237,9 @@ class AccountControllerTest {
     @Test
     @DisplayName("При получении информации о счете получает dto")
     void getAccountsInfo_thenReturnDto() {
-        Mockito.when(mockAccountService.getAccountsInfo(anyString())).thenReturn(validAccount1);
+        Mockito.when(mockAccountService.getAccountsInfo(any())).thenReturn(validAccount1);
 
-        BaseResponse accountsInfo = accountController.getAccountsInfo(new IdIncomeAccountDto(validAccount1.getId().toString()));
+        SuccessResponseDto<AccountDto> accountsInfo = (SuccessResponseDto<AccountDto>)accountController.getAccountsInfo(new RequestAccountIdDto(validAccount1.getId().toString()));
         AccountDto response = (AccountDto) accountsInfo.getResponse();
 
         Assertions.assertAll(
@@ -244,17 +258,27 @@ class AccountControllerTest {
         List<FieldValidationError> response = new ArrayList<>();
         response.add(new FieldValidationError("id","Поле не может быть пустым"));
         ValidationError responseError = new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", response);
-        ValidationError result = (ValidationError) accountController.getAccountsInfo(new IdIncomeAccountDto(""));
+        ValidationError result = (ValidationError) accountController.getAccountsInfo(new RequestAccountIdDto("невалидное"));
+        Assertions.assertEquals(responseError.getErrorMessage(), result.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("При получении информации о счете со значением - idDto невалидно- возвращается ошибка валидации")
+    void getAccountsInfo_whenIdDtoIsInvalid_thenReturnValidationError() {
+        List<FieldValidationError> response = new ArrayList<>();
+        response.add(new FieldValidationError("id","Поле не может быть пустым"));
+        ValidationError responseError = new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", response);
+        ValidationError result = (ValidationError) accountController.getAccountsInfo(new RequestAccountIdDto(""));
         Assertions.assertEquals(responseError.getErrorMessage(), result.getErrorMessage());
     }
 
     @Test
     @DisplayName("При получении информации о счете при получении из сервиса значения null возвращается Error")
     void getAccountsInfo_whenUUIDisNull_thenReturnError() {
-        Mockito.when(mockAccountService.getAccountsInfo(anyString())).thenReturn(null);
+        Mockito.when(mockAccountService.getAccountsInfo(any())).thenReturn(null);
         ValidationError validationError = new ValidationError(ResponseStatus.WARN,
                 String.format("Нет счёта с идентификатором %s", "f21c831f-9807-4de5-88c7-61cfe33e1c50"), null);
-        ValidationError result = (ValidationError) accountController.getAccountsInfo(new IdIncomeAccountDto("f21c831f-9807-4de5-88c7-61cfe33e1c50"));
+        ValidationError result = (ValidationError) accountController.getAccountsInfo(new RequestAccountIdDto("f21c831f-9807-4de5-88c7-61cfe33e1c50"));
         Assertions.assertEquals(validationError.getErrorMessage(), result.getErrorMessage());
     }
 }

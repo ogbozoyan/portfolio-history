@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public interface OperationService {
 
-    UUID replenishAccount(String accountId, Double amount);
+    UUID replenishAccount(UUID accountId, Double amount);
 
     WithdrawalResult withdrawFromAccount(String accountId, Double amount);
 }
