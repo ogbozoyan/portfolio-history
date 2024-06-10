@@ -11,5 +11,5 @@ public interface PurchasedAssetRepository extends JpaRepository<PurchasedAsset, 
     Optional<PurchasedAsset> findByAccountIdAndCode(UUID accountId, String code);
 
 
-    List<PurchasedAsset> findAllByUUID(UUID accountId);
+    List<PurchasedAsset> findByAccountId(UUID accountId);
 }
