@@ -125,6 +125,16 @@ class AccountControllerTest {
     }
 
     @Test
+    @DisplayName("При обновлении некорректных данных счета - idDto невалидно - возвращается ошибка валидации")
+    void updateAccount_whenIdDtoIsInvalid_thenReturnValidationError() {
+        List<FieldValidationError> response = new ArrayList<>();
+        response.add(new FieldValidationError("id","Поле не может быть пустым"));
+        ValidationError responseError = new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", response);
+        ValidationError result = (ValidationError) accountController.updateAccount(new IncomeFullAccountDto("невалидное", "БКС3", "БКС", "03"));
+        Assertions.assertEquals(responseError.getErrorMessage(), result.getErrorMessage());
+    }
+
+    @Test
     @DisplayName("При обновлении данных счета возвращается корректный UUID")
     void updateAccount_whenDtoIsValid_thenReturnUUID() {
         UUID uuid3 = UUID.fromString("f21c831f-9807-4de5-88c7-61cfe33e1c47");
@@ -244,6 +254,16 @@ class AccountControllerTest {
     @Test
     @DisplayName("При получении информации о счете со значением - idDto.isEmpty- возвращается ошибка валидации")
     void getAccountsInfo_whenIdDtoIsEmpty_thenReturnValidationError() {
+        List<FieldValidationError> response = new ArrayList<>();
+        response.add(new FieldValidationError("id","Поле не может быть пустым"));
+        ValidationError responseError = new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", response);
+        ValidationError result = (ValidationError) accountController.getAccountsInfo(new RequestAccountIdDto("невалидное"));
+        Assertions.assertEquals(responseError.getErrorMessage(), result.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("При получении информации о счете со значением - idDto невалидно- возвращается ошибка валидации")
+    void getAccountsInfo_whenIdDtoIsInvalid_thenReturnValidationError() {
         List<FieldValidationError> response = new ArrayList<>();
         response.add(new FieldValidationError("id","Поле не может быть пустым"));
         ValidationError responseError = new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", response);

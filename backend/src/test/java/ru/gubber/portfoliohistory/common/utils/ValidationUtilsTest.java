@@ -32,7 +32,7 @@ class ValidationUtilsTest {
     @DisplayName("При невалидном uuid возвращается ошибка")
     void validateUUID_whenUUIDIsInvalid_thenReturnFalse() {
         String invalid = "невалидный";
-        Assertions.assertNotNull(ValidationUtils.validateUUID(invalid, "uuid"));
+        Assertions.assertNotNull(ValidationUtils.validateUUID(invalid, "id"));
     }
 
     @Test
@@ -41,6 +41,6 @@ class ValidationUtilsTest {
         Pattern UUID_REGEX =
                 Pattern.compile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
         String valid = "b1acc051-ea56-4ffc-a249-67010f8dd131";
-        Assertions.assertNull(ValidationUtils.validateUUID(valid, "uuid"));
+        Assertions.assertNull(ValidationUtils.validateUUID(valid, "id"));
     }
 }
