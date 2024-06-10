@@ -237,7 +237,7 @@ class AccountControllerTest {
     @Test
     @DisplayName("При получении информации о счете получает dto")
     void getAccountsInfo_thenReturnDto() {
-        Mockito.when(mockAccountService.getAccountsInfo(anyString())).thenReturn(validAccount1);
+        Mockito.when(mockAccountService.getAccountsInfo(any())).thenReturn(validAccount1);
 
         SuccessResponseDto<AccountDto> accountsInfo = (SuccessResponseDto<AccountDto>)accountController.getAccountsInfo(new RequestAccountIdDto(validAccount1.getId().toString()));
         AccountDto response = (AccountDto) accountsInfo.getResponse();
@@ -275,7 +275,7 @@ class AccountControllerTest {
     @Test
     @DisplayName("При получении информации о счете при получении из сервиса значения null возвращается Error")
     void getAccountsInfo_whenUUIDisNull_thenReturnError() {
-        Mockito.when(mockAccountService.getAccountsInfo(anyString())).thenReturn(null);
+        Mockito.when(mockAccountService.getAccountsInfo(any())).thenReturn(null);
         ValidationError validationError = new ValidationError(ResponseStatus.WARN,
                 String.format("Нет счёта с идентификатором %s", "f21c831f-9807-4de5-88c7-61cfe33e1c50"), null);
         ValidationError result = (ValidationError) accountController.getAccountsInfo(new RequestAccountIdDto("f21c831f-9807-4de5-88c7-61cfe33e1c50"));

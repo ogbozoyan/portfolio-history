@@ -126,7 +126,7 @@ public class AccountController {
             log.info(VALIDATION_ERROR);
             return new ValidationError(ResponseStatus.ERROR, "Не правильный запрос", validationErrors);
         }
-        Account accountsInfo = accountService.getAccountsInfo(dto.id());
+        Account accountsInfo = accountService.getAccountsInfo(UUID.fromString(dto.id()));
         if (accountsInfo != null) {
             AccountDto result = AccountMapper.toAccountDto(accountsInfo);
             log.info("Запрос успешно выполнен.");

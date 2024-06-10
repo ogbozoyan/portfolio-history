@@ -150,7 +150,7 @@ class AccountServiceImplTest {
         Optional<Account> optionalAccount = Optional.of(validAccount1);
         Mockito.when(mockRepository.findById(any())).thenReturn(optionalAccount);
 
-        Account accountsInfo = accountService.getAccountsInfo(validAccount1.getId().toString());
+        Account accountsInfo = accountService.getAccountsInfo(validAccount1.getId());
 
         Assertions.assertAll(
                 () -> {

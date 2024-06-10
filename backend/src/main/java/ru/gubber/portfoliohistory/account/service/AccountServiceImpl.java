@@ -66,8 +66,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account getAccountsInfo(String id) {
-        Optional<Account> optionalAccount = repository.findById(UUID.fromString(id));
+    public Account getAccountsInfo(UUID id) {
+        Optional<Account> optionalAccount = repository.findById(id);
         return optionalAccount.orElse(null);
     }
 
