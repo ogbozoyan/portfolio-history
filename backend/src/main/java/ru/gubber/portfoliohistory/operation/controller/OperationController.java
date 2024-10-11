@@ -25,7 +25,7 @@ import java.util.UUID;
 @RestController
 public class OperationController {
     private final OperationService operationService;
-    private final Logger log = LoggerFactory.getLogger(AccountController.class);
+    private final Logger log = LoggerFactory.getLogger(OperationController.class);
 
     public OperationController(OperationService operationService) {
         this.operationService = operationService;
